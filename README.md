@@ -1,4 +1,4 @@
-# AgriSense AI — Prototype
+# Kisan Mitra AI — Prototype
 
 A working end-to-end precision agri-tech application: leaf photo → **38-Class Deep Learning Vision Diagnosis (ResNet-50)** → live weather (Open-Meteo) → outbreak risk forecasting → planting advice → (simulated/live) SMS alert, in English/Hindi with voice read-out and interactive Crop Doctor Chat.
 
