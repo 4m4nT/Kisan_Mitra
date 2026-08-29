@@ -1,0 +1,9 @@
+streamlit>=1.35
+numpy
+pillow
+requests
+gTTS
+onnxruntime
+# optional, only needed if you wire up real SMS sending:
+# twilio
+
