@@ -1,5 +1,5 @@
 # Kisan Mitra AI — Prototype
-Made by AmanTomar
+Made by AmanTomar the great
 A working end-to-end precision agri-tech application: leaf photo → **38-Class Deep Learning Vision Diagnosis (ResNet-50)** → live weather (Open-Meteo) → outbreak risk forecasting → planting advice → (simulated/live) SMS alert, in English/Hindi with voice read-out and interactive Crop Doctor Chat.
 
 **AI Vision Model Active:** The app now runs a real 38-class ResNet-50 convolutional neural network (`models/cropguard.onnx`) trained on the PlantVillage crop dataset for instant offline/edge inference.
