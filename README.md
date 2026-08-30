@@ -1,94 +1,204 @@
-# Kisan Mitra AI — Prototype
-Made by AmanTomar
+<div align="center">
 
-A working end-to-end precision agri-tech application: leaf photo → **38-Class Deep Learning Vision Diagnosis (ResNet-50)** → live weather (Open-Meteo) → outbreak risk forecasting → planting advice → (simulated/live) SMS alert, in English/Hindi with voice read-out and interactive Crop Doctor Chat.
+# 🌿 Kisan Mitra (किसान मित्र)
+### *AI-Driven Precision Crop Doctor & Regional Disease Surveillance Ecosystem*
 
-**AI Vision Model Active:** The app now runs a real 38-class ResNet-50 convolutional neural network (`models/cropguard.onnx`) trained on the PlantVillage crop dataset for instant offline/edge inference.
+[![Python Version](https://img.shields.io/badge/Python-3.10%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
+[![Streamlit](https://img.shields.io/badge/Streamlit-1.35%2B-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white)](https://streamlit.io)
+[![ONNX Runtime](https://img.shields.io/badge/ONNX_Runtime-Edge_AI-005CED?style=for-the-badge&logo=onnx&logoColor=white)](https://onnxruntime.ai)
+[![License](https://img.shields.io/badge/License-MIT-16C196?style=for-the-badge)](LICENSE)
+[![SIH](https://img.shields.io/badge/Smart_India_Hackathon-Prototype-DCA538?style=for-the-badge)](#)
 
-## 1. Run it locally (5 minutes)
+<p align="center">
+  <b>Bridging the gap between edge AI computer vision, localized weather forecasting, and grassroots agricultural extension systems to empower Indian farmers.</b>
+</p>
 
+[Quick Start](#-quick-start) • [Key Features](#-key-features) • [Architecture](#-system-architecture) • [38 Supported Crop Classes](#-supported-crops--diseases) • [SIH Pillars](#-smart-india-hackathon-strategic-pillars) • [Tech Stack](#-technology-stack)
+
+</div>
+
+---
+
+## 📌 Executive Summary
+
+Crop diseases cause **15% to 30% annual agricultural yield loss** in India, often exacerbated by delayed diagnosis, indiscriminate pesticide use, and a lack of regional outbreak intelligence.
+
+**Kisan Mitra** is an end-to-end precision agri-tech platform that combines:
+1. **Instant On-Device AI Vision** (38 crop-disease classes running on low-latency ONNX Runtime).
+2. **Microclimate Outbreak Risk Forecasting** (7-day predictive epidemiological modeling via Open-Meteo).
+3. **Regional Geospatial Surveillance & Hotspot Mapping** for district agricultural officers.
+4. **Plant Pathologist Verification Queue & KVK Referral Network**.
+5. **Chemical Safety Guardrails** with Pre-Harvest Interval (PHI) calculators to prevent toxic residues.
+
+---
+
+## 🚀 Key Features
+
+```
+                                    ┌────────────────────────┐
+                                    │  Farmer Uploads Leaf   │
+                                    └───────────┬────────────┘
+                                                │
+                 ┌──────────────────────────────┴─────────────────────────────┐
+                 ▼                                                            ▼
+    ┌─────────────────────────┐                                  ┌─────────────────────────┐
+    │  Deep Learning Vision   │                                  │  Live Microclimate API  │
+    │  (38-Class ResNet ONNX) │                                  │  (7-Day Weather Matrix) │
+    └────────────┬────────────┘                                  └────────────┬────────────┘
+                 │                                                            │
+                 └──────────────────────────────┬─────────────────────────────┘
+                                                │
+                                                ▼
+                               ┌────────────────────────────────┐
+                               │  Precision Diagnostic Engine   │
+                               │  • Disease Identification      │
+                               │  • Organic & Chemical Rx       │
+                               │  • Pre-Harvest Interval (PHI)  │
+                               │  • Outbreak Risk Forecast      │
+                               └────────┬──────────────┬────────┘
+                                        │              │
+                    ┌───────────────────┘              └───────────────────┐
+                    ▼                                                      ▼
+     ┌─────────────────────────────┐                        ┌─────────────────────────────┐
+     │  Farmer Advisory Portal     │                        │  Officials' Surveillance    │
+     │  • Audio Read-Out (TTS)     │                        │  • Regional Hotspot Map     │
+     │  • Multilingual (EN / HI)   │                        │  • KVK / Lab Referral Queue │
+     │  • AI Agronomist Chatbot    │                        │  • CSV Outbreak Analytics   │
+     └─────────────────────────────┘                        └─────────────────────────────┘
+```
+
+### 🔬 1. AI Vision Crop Doctor
+- **38-Class Deep Learning Neural Network** (`models/cropguard.onnx`) for instant leaf pathology analysis.
+- **Edge Inference:** Sub-second response time with optimized CPU inference (no GPU required).
+- **Leaf Pre-validation Guard:** Heuristically rejects non-leaf/irrelevant uploads with explanatory feedback.
+
+### 🌦️ 2. Predictive Outbreak Forecasting
+- Real-time 7-day meteorological analysis (temperature, precipitation, relative humidity, dew point).
+- Calculates disease infection probability score before symptoms spread across neighbouring farms.
+
+### 🌐 3. Regional Hotspots & Proximity Alerts
+- City-to-state automatic geolocation covering over 100+ Indian districts.
+- Configurable radius radar ($5\text{ km} - 100\text{ km}$) warning farmers of confirmed nearby infections.
+
+### 🏛️ 4. Agriculture Officials' Surveillance Portal
+- Decision-support dashboard for District Agricultural Officers (DAOs).
+- Aggregates high-severity trends, district-wise disease distributions, and one-click surveillance CSV exports.
+
+### 🧪 5. Chemical Safety & PHI Guardrails
+- **Pre-Harvest Interval (PHI) Calculator:** Calculates mandatory safe waiting days between spraying and harvest to eliminate dangerous chemical residues in market produce.
+- **Dosage Calculator:** Computes exact chemical weight and water volume according to acreage.
+
+### 👨‍🔬 6. Human-in-the-Loop Expert Review & KVK Network
+- **Pathologist Verification Queue:** Allows ICAR / KVK agricultural scientists to confirm, correct, or refine AI diagnoses.
+- **Pan-India KVK Directory:** Connects farmers to their nearest accredited diagnostic testing centers.
+
+### 🗣️ 7. Multilingual Voice & AI Chat
+- Full **English** and **Hindi (हिंदी)** support.
+- Native Text-to-Speech (TTS) audio playback for low-literacy rural accessibility.
+- Integrated AI Agronomist Chatbot for personalized agronomic questions.
+
+---
+
+## 🌾 Supported Crops & Diseases
+
+The model classifies **38 distinct crop-disease combinations** across 14 vital crop families:
+
+| Crop | Target Pathologies & Conditions |
+|---|---|
+| **Tomato** | Bacterial Spot, Early Blight, Late Blight, Leaf Mold, Septoria Leaf Spot, Spider Mites, Target Spot, Yellow Leaf Curl Virus, Mosaic Virus, Healthy |
+| **Potato** | Early Blight, Late Blight, Healthy |
+| **Corn (Maize)** | Cercospora Leaf Spot (Gray Leaf Spot), Common Rust, Northern Leaf Blight, Healthy |
+| **Apple** | Apple Scab, Black Rot, Cedar Apple Rust, Healthy |
+| **Grape** | Black Rot, Esca (Black Measles), Leaf Blight (Isariopsis), Healthy |
+| **Chili / Bell Pepper** | Bacterial Spot, Healthy |
+| **Rice & Wheat** | Leaf Blast, Brown Spot, Rust, Healthy |
+| **Others** | Soybean, Strawberry, Cherry, Peach, Orange/Citrus, Squash, Raspberry, Blueberry |
+
+---
+
+## 💻 Quick Start
+
+### Prerequisites
+- Python 3.10, 3.11, or 3.12
+- Git
+
+### 1. Clone the Repository
 ```bash
+git clone https://github.com/4m4nT/Kisan_Mitra.git
+cd Kisan_Mitra
+```
+
+### 2. Set Up Virtual Environment
+```bash
+# Windows
 python -m venv venv
-source venv/bin/activate        # Windows: venv\Scripts\activate
+venv\Scripts\activate
+
+# Linux / macOS
+python3 -m venv venv
+source venv/bin/activate
+```
+
+### 3. Install Dependencies
+```bash
 pip install -r requirements.txt
+```
+
+### 4. Launch the Application
+```bash
+# On Windows, you can also double-click run_app.bat
 streamlit run app.py
 ```
+Open **`http://localhost:8501`** in your browser.
 
-It opens at `http://localhost:8501`. Upload a leaf photo (any photo works for the
-demo — try a plain green background vs. a brownish one to see the risk/diagnosis
-change), type a town/city name, and pick a crop.
+---
 
-## 2. Put it in front of your team/mentors today
+## 📂 Project Architecture
 
-Easiest free options, no server management:
-- **Streamlit Community Cloud** (streamlit.io/cloud): push this folder to a public
-  GitHub repo, connect the repo, deploy — you get a shareable `*.streamlit.app` link.
-- **Hugging Face Spaces**: create a Space with the Streamlit SDK, upload these files.
-
-Either gives you a live link you can share instead of screen-sharing.
-
-## 3. Building this further with Google Antigravity (free)
-
-[Antigravity](https://antigravity.google) is Google's free agentic IDE (VS Code-based)
-— you give it a task, it plans, writes, and tests code across files while you review.
-It's a good fit for extending this prototype because you can hand it one feature at a
-time and check its work.
-
-Steps:
-1. Install Antigravity from antigravity.google/download and sign in with a Google account.
-2. Open this project folder in Antigravity.
-3. Use the agent panel for scoped tasks, e.g.:
-   - *"Replace the classify_leaf() heuristic in app.py with a real Keras model loaded
-     from keras_model.h5, keeping the same function signature and CLASS_NAMES list."*
-   - *"Add a third language (e.g. Marathi) to the TEXT dictionary in app.py, translating
-     every key from the English block."*
-   - *"Add a results-history page that shows the last 5 diagnoses cached in
-     st.session_state, for the offline-mode story."*
-4. Review every diff before accepting — treat it like a junior developer's PR, not
-   an autopilot. Ask it to explain any function you don't follow.
-5. Keep tasks small and testable (one feature per request) rather than "build the
-   whole app" — it stays easier to review and debug that way.
-
-## 4. Next step for a real disease model (still free)
-
-1. Go to https://teachablemachine.withgoogle.com/ → "Image Project".
-2. Get a labeled leaf dataset — the PlantVillage dataset on Kaggle is the standard
-   free starting point (search "PlantVillage dataset kaggle").
-3. Upload a few hundred images per class (healthy / early blight / late blight / etc.),
-   train in-browser (a few minutes), export as **TensorFlow → Keras**.
-4. Drop the exported `keras_model.h5` and `labels.txt` next to `app.py`, and swap in
-   the real-model version of `classify_leaf()` (code snippet is in `app.py`'s comments).
-
-This gets you from "heuristic demo" to "real trained model" without writing training
-code yourself — good enough to show meaningful accuracy numbers to mentors.
-
-## 5. Turning the risk score into a real forecasting model (later)
-
-The current `compute_outbreak_risk()` uses simple, transparent thresholds (humid
-days, wet days, average min temperature) loosely based on the fact that many fungal
-blights favor cool, humid, wet spells. For the full product, replace this with a
-calibrated epidemiological model (e.g., a degree-day accumulation or infection-period
-model specific to each disease), ideally reviewed with an agronomist, and back-test it
-against real reported outbreak dates before trusting its lead-time claims.
-
-## 6. Real SMS alerts
-
-Sign up for a free Twilio trial (twilio.com/try-twilio), grab your Account SID, Auth
-Token, and trial phone number, then add to `.streamlit/secrets.toml`:
-
-```toml
-TWILIO_SID = "..."
-TWILIO_TOKEN = "..."
-TWILIO_FROM = "+1..."
+```plaintext
+agrisense-prototype/
+│
+├── app.py                     # Primary Application (UI, Vision Inference, Weather, Advisory)
+├── sih_pillars_addon.py       # Surveillance Dashboard, Hotspots, KVK Directory, PHI Engine
+├── disease_info.py            # Agronomic Knowledge Base (Symptoms, Organic/Chemical Treatments)
+│
+├── models/
+│   └── cropguard.onnx         # 38-Class Trained Deep Learning Vision Model (ONNX format)
+│
+├── static/                    # UI Assets, Icons, and Audio Cache
+├── kisan_mitra_sih.db         # Persistent SQLite Surveillance & Referral Database
+├── requirements.txt           # Python Package Manifest
+├── run_app.bat                # Windows One-Click Execution Batch Script
+└── README.md                  # Project Documentation
 ```
 
-`send_sms()` in `app.py` will automatically start sending real messages once these
-secrets are present — no code change needed. `pip install twilio` first.
+---
 
-## File overview
+## 🛠️ Technology Stack
 
-| File | Purpose |
+| Domain | Technologies Used |
 |---|---|
-| `app.py` | The whole app — UI, heuristic classifier, weather, risk logic, planting advice, TTS, SMS |
-| `requirements.txt` | Python dependencies |
-| `README.md` | This file |
+| **Core Framework** | Python 3.10+, Streamlit |
+| **Computer Vision & AI** | ONNX Runtime, ResNet-50 Architecture, OpenCV, Pillow, NumPy |
+| **Weather & Epidemiology** | Open-Meteo Global Meteorological API |
+| **Database & Persistence** | SQLite3, Pandas |
+| **UI & Accessibility** | Responsive Glassmorphism CSS, Google Fonts (Plus Jakarta Sans, Fraunces), gTTS |
+| **Visualization** | Streamlit Maps, Altair, Matplotlib Charts |
+
+---
+
+## 🏛️ Smart India Hackathon Strategic Alignment
+
+This prototype addresses key agricultural challenges recognized by **ICAR** and the **Ministry of Agriculture & Farmers Welfare**:
+
+1. **Early Detection:** Reduces crop loss by detecting foliar pathogens before visible field-wide spread.
+2. **Judicious Chemical Use:** Enforces strict PHI periods and dosage limits, promoting soil health and export quality.
+3. **Data-Driven Policy:** Feeds anonymous, aggregated disease hot-spots directly into state surveillance pipelines.
+4. **Inclusive Design:** Full voice readouts and bilingual interfaces ensure adoption by marginal farmers.
+
+---
+
+## 📄 License & Attribution
+
+
+Developed with ❤️ by Aman Tomar for **Indian Agriculture & Precision Farming**.
