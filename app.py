@@ -15,6 +15,7 @@ from PIL import Image
 import onnxruntime as ort
 
 from disease_info import DISEASE_DATA, get_disease_info
+import sih_pillars_addon
 
 # ----------------------------------------------------------------------------
 # 0. PAGE CONFIGURATION
@@ -57,7 +58,7 @@ html, body, [data-testid="stAppViewContainer"] {
 
 [data-testid="stHeader"] { background: transparent; }
 section.main .block-container {
-  max-width: 720px;
+  max-width: 960px;
   width: 100%;
   padding-top: 0.5rem;
   padding-bottom: 3.5rem;
@@ -715,217 +716,248 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-# 3. How it Works (4-Step Responsive Grid)
-st.markdown(f'<div class="km-how-title">{T["how_title"]}</div>', unsafe_allow_html=True)
-st.markdown(
-    f"""<div class="km-how-grid">
-<div class="km-how-item">
-<div class="km-how-icon-circle">📷</div>
-<div class="km-how-label">{T['how1_title']}</div>
-<div class="km-how-desc">{T['how1_desc']}</div>
-</div>
-<div class="km-how-item">
-<div class="km-how-icon-circle">🤖</div>
-<div class="km-how-label">{T['how2_title']}</div>
-<div class="km-how-desc">{T['how2_desc']}</div>
-</div>
-<div class="km-how-item">
-<div class="km-how-icon-circle">🔬</div>
-<div class="km-how-label">{T['how3_title']}</div>
-<div class="km-how-desc">{T['how3_desc']}</div>
-</div>
-<div class="km-how-item">
-<div class="km-how-icon-circle">💬</div>
-<div class="km-how-label">{T['how4_title']}</div>
-<div class="km-how-desc">{T['how4_desc']}</div>
-</div>
-</div>""",
-    unsafe_allow_html=True
-)
+# ----------------------------------------------------------------------------
+# 3. TOP LEVEL NAVIGATION TABS
+# ----------------------------------------------------------------------------
+main_app_tabs = st.tabs([
+    "🌱 AI Crop Doctor & Diagnosis",
+    "🏛️ SIH Pillars & Regional Surveillance"
+])
 
-# 4. Disease Detection Interface (Upload Leaf Image Card)
-st.markdown('<div id="disease-detection-interface"></div>', unsafe_allow_html=True)
-st.markdown(
-    f"""<div class="km-section-card">
-<div class="km-card-header">
-<div class="km-card-title">{T['upload_title']}</div>
-<div class="km-card-subtitle">{T['upload_sub']}</div>
-</div>""",
-    unsafe_allow_html=True
-)
-
-uploaded_file = st.file_uploader(
-    "Upload leaf image",
-    type=["jpg", "jpeg", "png", "webp"],
-    label_visibility="collapsed"
-)
-
-col_loc, col_crp = st.columns(2)
-with col_loc:
-    location_input = st.text_input("Location / स्थान", value="Pune")
-with col_crp:
-    crop_select = st.selectbox(
-        "Crop / फसल",
-        [
-            "Auto-Detect (Any Crop)",
-            "Tomato",
-            "Potato",
-            "Corn (Maize)",
-            "Chili / Capsicum",
-            "Apple",
-            "Grape",
-            "Peach",
-            "Strawberry",
-            "Soybean",
-            "Squash / Cucurbits",
-            "Orange / Citrus",
-            "Cherry",
-            "Blueberry",
-            "Raspberry",
-            "Wheat",
-            "Rice"
-        ]
+with main_app_tabs[0]:
+    # 3. How it Works (4-Step Responsive Grid)
+    st.markdown(f'<div class="km-how-title">{T["how_title"]}</div>', unsafe_allow_html=True)
+    st.markdown(
+        f"""<div class="km-how-grid">
+    <div class="km-how-item">
+    <div class="km-how-icon-circle">📷</div>
+    <div class="km-how-label">{T['how1_title']}</div>
+    <div class="km-how-desc">{T['how1_desc']}</div>
+    </div>
+    <div class="km-how-item">
+    <div class="km-how-icon-circle">🤖</div>
+    <div class="km-how-label">{T['how2_title']}</div>
+    <div class="km-how-desc">{T['how2_desc']}</div>
+    </div>
+    <div class="km-how-item">
+    <div class="km-how-icon-circle">🔬</div>
+    <div class="km-how-label">{T['how3_title']}</div>
+    <div class="km-how-desc">{T['how3_desc']}</div>
+    </div>
+    <div class="km-how-item">
+    <div class="km-how-icon-circle">💬</div>
+    <div class="km-how-label">{T['how4_title']}</div>
+    <div class="km-how-desc">{T['how4_desc']}</div>
+    </div>
+    </div>""",
+        unsafe_allow_html=True
     )
 
-detect_clicked = st.button(f"🔍 {T['detect_btn']}", use_container_width=True)
-st.markdown('</div>', unsafe_allow_html=True)
+    # 4. Disease Detection Interface (Upload Leaf Image Card)
+    st.markdown('<div id="disease-detection-interface"></div>', unsafe_allow_html=True)
+    st.markdown(
+        f"""<div class="km-section-card">
+    <div class="km-card-header">
+    <div class="km-card-title">{T['upload_title']}</div>
+    <div class="km-card-subtitle">{T['upload_sub']}</div>
+    </div>""",
+        unsafe_allow_html=True
+    )
 
-# 5. Process Image on Upload
-if uploaded_file is not None:
-    image = Image.open(uploaded_file)
-    valid_plant, reject_reason = is_valid_crop_leaf(image)
+    uploaded_file = st.file_uploader(
+        "Upload leaf image",
+        type=["jpg", "jpeg", "png", "webp"],
+        label_visibility="collapsed"
+    )
 
-    if not valid_plant:
-        # Branch 2b: Incorrect Image Type Uploaded (Error State)
-        st.markdown(
-            f"""<div class="km-section-card">
-<div class="km-error-box">
-<div class="km-error-badge">{T['invalid_photo_badge']}</div>
-<div class="km-error-msg">{T['invalid_photo_title']}</div>
-<div class="km-error-sub">{T['invalid_photo_msg']} ({reject_reason})<br/>{T['invalid_photo_sub']}</div>
-</div>
-</div>""",
-            unsafe_allow_html=True
+    col_loc, col_crp = st.columns(2)
+    with col_loc:
+        location_input = st.text_input("Location / स्थान", value="Dehradun", placeholder="e.g. Dehradun, Haridwar, Lucknow, Shimla...")
+    with col_crp:
+        crop_select = st.selectbox(
+            "Crop / फसल",
+            [
+                "Auto-Detect (Any Crop)",
+                "Tomato",
+                "Potato",
+                "Corn (Maize)",
+                "Chili / Capsicum",
+                "Apple",
+                "Grape",
+                "Peach",
+                "Strawberry",
+                "Soybean",
+                "Squash / Cucurbits",
+                "Orange / Citrus",
+                "Cherry",
+                "Blueberry",
+                "Raspberry",
+                "Wheat",
+                "Rice"
+            ]
         )
-        st.image(image, caption="Uploaded Image", use_container_width=True)
-    else:
-        with st.spinner("AI is analyzing leaf tissue..."):
-            diag_info, confidence, is_confident = classify_crop_leaf(image, selected_crop=crop_select, lang=lang)
 
-        if not is_confident or diag_info is None:
-            # Low confidence / Non-crop fallback
+    detect_clicked = st.button(f"🔍 {T['detect_btn']}", use_container_width=True)
+    st.markdown('</div>', unsafe_allow_html=True)
+
+    # 5. Process Image on Upload
+    if uploaded_file is not None:
+        image = Image.open(uploaded_file)
+        valid_plant, reject_reason = is_valid_crop_leaf(image)
+
+        if not valid_plant:
+            # Branch 2b: Incorrect Image Type Uploaded (Error State)
             st.markdown(
                 f"""<div class="km-section-card">
-<div class="km-error-box">
-<div class="km-error-badge">{T['invalid_photo_badge']}</div>
-<div class="km-error-msg">{T['invalid_photo_title']}</div>
-<div class="km-error-sub">{T['invalid_photo_msg']}<br/>{T['invalid_photo_sub']}</div>
-</div>
-</div>""",
+    <div class="km-error-box">
+    <div class="km-error-badge">{T['invalid_photo_badge']}</div>
+    <div class="km-error-msg">{T['invalid_photo_title']}</div>
+    <div class="km-error-sub">{T['invalid_photo_msg']} ({reject_reason})<br/>{T['invalid_photo_sub']}</div>
+    </div>
+    </div>""",
                 unsafe_allow_html=True
             )
             st.image(image, caption="Uploaded Image", use_container_width=True)
         else:
-            st.session_state["last_diag_info"] = diag_info
+            with st.spinner("AI is analyzing leaf tissue..."):
+                diag_info, confidence, is_confident = classify_crop_leaf(image, selected_crop=crop_select, lang=lang)
 
-            # 5. Analysis Results Screen (Responsive Split Layout)
-            st.markdown(
-                f"""<div class="km-section-card">
-<div class="km-card-header">
-<div class="km-card-title">{T['results_title']}</div>
-</div>""",
-                unsafe_allow_html=True
-            )
-
-            col_img, col_res = st.columns([1, 1.25])
-            with col_img:
-                st.image(image, caption="Analyzed Crop Leaf", use_container_width=True)
-            with col_res:
+            if not is_confident or diag_info is None:
+                # Low confidence / Non-crop fallback
                 st.markdown(
-                    f"""<div class="km-result-stack">
-<div class="km-result-row km-row-disease">
-<div class="km-result-row-title">🏷️ {T['disease_identified']}</div>
-<div class="km-result-row-value">{diag_info['label']}</div>
-<div class="km-result-row-sub">Pathogen: {diag_info['type']}</div>
-</div>
-<div class="km-result-row km-row-confidence">
-<div class="km-result-row-title">📊 {T['confidence_level']}</div>
-<div class="km-result-row-value">{confidence * 100:.2f}%</div>
-</div>
-<div class="km-result-row-advice">
-<div class="km-result-row-title">💡 {T['expert_advice']}</div>
-<div class="km-result-row-sub"><b>Treatment:</b> {diag_info['guidance']}</div>
-<div class="km-result-row-sub" style="margin-top:0.4rem;"><b>Prevention:</b> {diag_info['prevention']}</div>
-</div>
-</div>""",
+                    f"""<div class="km-section-card">
+    <div class="km-error-box">
+    <div class="km-error-badge">{T['invalid_photo_badge']}</div>
+    <div class="km-error-msg">{T['invalid_photo_title']}</div>
+    <div class="km-error-sub">{T['invalid_photo_msg']}<br/>{T['invalid_photo_sub']}</div>
+    </div>
+    </div>""",
                     unsafe_allow_html=True
                 )
-            st.markdown('</div>', unsafe_allow_html=True)
+                st.image(image, caption="Uploaded Image", use_container_width=True)
+            else:
+                st.session_state["last_diag_info"] = diag_info
 
-            # Weather & Outbreak Risk Card (Subtle dark matte styling)
-            geo = None
-            weather = None
-            if location_input:
+                # Auto-register non-healthy detections to SIH Surveillance Database
                 try:
-                    geo = geocode_location(location_input)
-                    if geo:
-                        weather = fetch_weather_forecast(geo["lat"], geo["lon"])
+                    is_healthy = "healthy" in diag_info.get("label", "").lower()
+                    if not is_healthy:
+                        c_name = crop_select if crop_select != "Auto-Detect (Any Crop)" else diag_info.get("crop", "Unknown")
+                        sev = "High" if any(w in diag_info["label"].lower() for w in ["blight", "rot", "virus", "rust"]) else "Medium"
+                        loc_city = (location_input or "Dehradun").strip()
+                        loc_state = sih_pillars_addon.resolve_state(loc_city, fallback="Uttarakhand" if loc_city.lower() == "dehradun" else "Unknown")
+                        sih_pillars_addon.save_detection_to_db(
+                            crop=c_name,
+                            disease=diag_info["label"],
+                            confidence=float(confidence),
+                            severity=sev,
+                            city=loc_city,
+                            state=loc_state
+                        )
                 except Exception:
                     pass
 
-            if weather:
-                current = weather.get("current", {})
-                risk, risk_why = calculate_outbreak_risk(weather)
-                plant_adv = get_planting_advice(crop_select, risk)
-
+                # 5. Analysis Results Screen (Responsive Split Layout)
                 st.markdown(
                     f"""<div class="km-section-card">
-<div class="km-card-title" style="font-size:clamp(1.05rem, 3vw, 1.2rem); margin-bottom:0.8rem;">🌦️ {T['weather_title']} ({geo['label'] if geo else location_input})</div>
-<div style="display:flex; gap:0.5rem; flex-wrap:wrap; margin-bottom:0.8rem;">
-<span class="km-weather-pill">🌡 {current.get('temperature_2m', '—')}°C</span>
-<span class="km-weather-pill">💧 {current.get('relative_humidity_2m', '—')}% Humidity</span>
-<span class="km-weather-pill">🌬 {current.get('wind_speed_10m', '—')} km/h Wind</span>
-</div>
-<div style="background:rgba(8, 22, 17, 0.65); border:1px solid rgba(149, 213, 178, 0.12); border-radius:12px; padding:0.85rem 1rem; margin-bottom:0.8rem;">
-<b>Outbreak Risk:</b> <span style="font-weight:800; color:{'#FF4D6D' if risk=='High' else '#F7CA75' if risk=='Medium' else '#5CE0D0'};">{risk}</span><br/>
-<span style="font-size:0.84rem; color:var(--km-text-sub);">{risk_why}</span>
-</div>
-<div style="background:rgba(8, 22, 17, 0.65); border:1px solid rgba(149, 213, 178, 0.12); border-radius:12px; padding:0.85rem 1rem;">
-<b>🌾 {T['planting_title']}:</b><br/>
-<span style="font-size:0.84rem; color:var(--km-text-sub);">{plant_adv}</span>
-</div>
-</div>""",
+    <div class="km-card-header">
+    <div class="km-card-title">{T['results_title']}</div>
+    </div>""",
                     unsafe_allow_html=True
                 )
 
-                # Audio Readout
-                audio_text = f"{diag_info['label']}. {diag_info['guidance']}. Outbreak risk is {risk}. {plant_adv}"
-                audio_data = generate_audio(audio_text, lang=lang)
-                if audio_data:
-                    st.markdown(f"<b>{T['listen_btn']}</b>", unsafe_allow_html=True)
-                    st.audio(audio_data, format="audio/mp3")
+                col_img, col_res = st.columns([1, 1.25])
+                with col_img:
+                    st.image(image, caption="Analyzed Crop Leaf", use_container_width=True)
+                with col_res:
+                    st.markdown(
+                        f"""<div class="km-result-stack">
+    <div class="km-result-row km-row-disease">
+    <div class="km-result-row-title">🏷️ {T['disease_identified']}</div>
+    <div class="km-result-row-value">{diag_info['label']}</div>
+    <div class="km-result-row-sub">Pathogen: {diag_info['type']}</div>
+    </div>
+    <div class="km-result-row-confidence">
+    <div class="km-result-row-title">📊 {T['confidence_level']}</div>
+    <div class="km-result-row-value">{confidence * 100:.2f}%</div>
+    </div>
+    <div class="km-result-row-advice">
+    <div class="km-result-row-title">💡 {T['expert_advice']}</div>
+    <div class="km-result-row-sub"><b>Treatment:</b> {diag_info['guidance']}</div>
+    <div class="km-result-row-sub" style="margin-top:0.4rem;"><b>Prevention:</b> {diag_info['prevention']}</div>
+    </div>
+    </div>""",
+                        unsafe_allow_html=True
+                    )
+                st.markdown('</div>', unsafe_allow_html=True)
 
-# 6. AI Chat Assistant (Docked clean panel matching flowchart)
-st.markdown(
-    f"""<div class="km-chat-box">
-<div class="km-chat-header">
-🌿 {T['chat_title']}
-</div>
-</div>""",
-    unsafe_allow_html=True
-)
+                # Weather & Outbreak Risk Card (Subtle dark matte styling)
+                geo = None
+                weather = None
+                if location_input:
+                    try:
+                        geo = geocode_location(location_input)
+                        if geo:
+                            weather = fetch_weather_forecast(geo["lat"], geo["lon"])
+                    except Exception:
+                        pass
 
-if "chat_history" not in st.session_state:
-    st.session_state["chat_history"] = []
+                if weather:
+                    current = weather.get("current", {})
+                    risk, risk_why = calculate_outbreak_risk(weather)
+                    plant_adv = get_planting_advice(crop_select, risk)
 
-for role, text in st.session_state["chat_history"]:
-    with st.chat_message(role):
-        st.markdown(text)
+                    st.markdown(
+                        f"""<div class="km-section-card">
+    <div class="km-card-title" style="font-size:clamp(1.05rem, 3vw, 1.2rem); margin-bottom:0.8rem;">🌦️ {T['weather_title']} ({geo['label'] if geo else location_input})</div>
+    <div style="display:flex; gap:0.5rem; flex-wrap:wrap; margin-bottom:0.8rem;">
+    <span class="km-weather-pill">🌡 {current.get('temperature_2m', '—')}°C</span>
+    <span class="km-weather-pill">💧 {current.get('relative_humidity_2m', '—')}% Humidity</span>
+    <span class="km-weather-pill">🌬 {current.get('wind_speed_10m', '—')} km/h Wind</span>
+    </div>
+    <div style="background:rgba(8, 22, 17, 0.65); border:1px solid rgba(149, 213, 178, 0.12); border-radius:12px; padding:0.85rem 1rem; margin-bottom:0.8rem;">
+    <b>Outbreak Risk:</b> <span style="font-weight:800; color:{'#FF4D6D' if risk=='High' else '#F7CA75' if risk=='Medium' else '#5CE0D0'};">{risk}</span><br/>
+    <span style="font-size:0.84rem; color:var(--km-text-sub);">{risk_why}</span>
+    </div>
+    <div style="background:rgba(8, 22, 17, 0.65); border:1px solid rgba(149, 213, 178, 0.12); border-radius:12px; padding:0.85rem 1rem;">
+    <b>🌾 {T['planting_title']}:</b><br/>
+    <span style="font-size:0.84rem; color:var(--km-text-sub);">{plant_adv}</span>
+    </div>
+    </div>""",
+                        unsafe_allow_html=True
+                    )
 
-chat_user_input = st.chat_input(T["chat_placeholder"])
-if chat_user_input:
-    st.session_state["chat_history"].append(("user", chat_user_input))
-    last_diag = st.session_state.get("last_diag_info")
-    bot_reply = assistant_reply(chat_user_input, last_diag)
-    st.session_state["chat_history"].append(("assistant", bot_reply))
-    st.rerun()
+                    # Audio Readout
+                    audio_text = f"{diag_info['label']}. {diag_info['guidance']}. Outbreak risk is {risk}. {plant_adv}"
+                    audio_data = generate_audio(audio_text, lang=lang)
+                    if audio_data:
+                        st.markdown(f"<b>{T['listen_btn']}</b>", unsafe_allow_html=True)
+                        st.audio(audio_data, format="audio/mp3")
+
+    # 6. AI Chat Assistant (Docked clean panel matching flowchart)
+    st.markdown(
+        f"""<div class="km-chat-box">
+    <div class="km-chat-header">
+    🌿 {T['chat_title']}
+    </div>
+    </div>""",
+        unsafe_allow_html=True
+    )
+
+    if "chat_history" not in st.session_state:
+        st.session_state["chat_history"] = []
+
+    for role, text in st.session_state["chat_history"]:
+        with st.chat_message(role):
+            st.markdown(text)
+
+    chat_user_input = st.chat_input(T["chat_placeholder"])
+    if chat_user_input:
+        st.session_state["chat_history"].append(("user", chat_user_input))
+        last_diag = st.session_state.get("last_diag_info")
+        bot_reply = assistant_reply(chat_user_input, last_diag)
+        st.session_state["chat_history"].append(("assistant", bot_reply))
+        st.rerun()
+
+with main_app_tabs[1]:
+    sih_pillars_addon.render_sih_pillars_tab()
