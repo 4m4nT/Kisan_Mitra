@@ -310,11 +310,13 @@ async function runOnDeviceInference(img) {
   let plantPixels = 0;
   let bluePixels = 0;
   let brownSpots = 0;
+  let specularMetallic = 0;
   const totalPixels = 224 * 224;
 
   const redChannel = new Float32Array(totalPixels);
   const greenChannel = new Float32Array(totalPixels);
   const blueChannel = new Float32Array(totalPixels);
+  const greenHues = [];
 
   const mean = [0.485, 0.456, 0.406];
   const std = [0.229, 0.224, 0.225];
@@ -324,10 +326,28 @@ async function runOnDeviceInference(img) {
     const g = data[i * 4 + 1] / 255.0;
     const b = data[i * 4 + 2] / 255.0;
 
+    const max = Math.max(r, g, b);
+    const min = Math.min(r, g, b);
+    let h = 0;
+    const s = max === 0 ? 0 : (max - min) / max;
+    const v = max;
+
+    if (max !== min) {
+      const d = max - min;
+      if (max === r) h = (g - b) / d + (g < b ? 6 : 0);
+      else if (max === g) h = (b - r) / d + 2;
+      else if (max === b) h = (r - g) / d + 4;
+      h = h * 60;
+    }
+
     const exg = 2.0 * g - r - b;
-    if (exg > 0.02 && g > 0.12) plantPixels++;
+    if (exg > 0.025 && s >= 0.12 && v >= 0.08 && v <= 0.94 && h >= 35 && h <= 160) {
+      plantPixels++;
+      greenHues.push(h);
+    }
     if (b > r * 1.25 && b > g * 1.1) bluePixels++;
     if (r > 0.28 && g > 0.18 && b < 0.26 && r > b * 1.35) brownSpots++;
+    if (v > 0.90 && s < 0.15 && r > 0.80 && g > 0.80 && b > 0.80) specularMetallic++;
 
     redChannel[i] = (r - mean[0]) / std[0];
     greenChannel[i] = (g - mean[1]) / std[1];
@@ -336,14 +356,39 @@ async function runOnDeviceInference(img) {
 
   const foliageRatio = plantPixels / totalPixels;
   const blueRatio = bluePixels / totalPixels;
+  const specularRatio = specularMetallic / totalPixels;
 
-  if (blueRatio > 0.35 && foliageRatio < 0.12) {
+  // Micro-texture complexity calculation
+  let gradSum = 0;
+  for (let y = 0; y < 223; y++) {
+    for (let x = 0; x < 223; x++) {
+      const idx = y * 224 + x;
+      gradSum += Math.abs(redChannel[idx + 1] - redChannel[idx]) + Math.abs(redChannel[idx + 224] - redChannel[idx]);
+    }
+  }
+  const textureComplexity = gradSum / (223 * 223 * 2);
+
+  // Hue variance
+  let hueStd = 0;
+  if (greenHues.length > 50) {
+    const avgH = greenHues.reduce((a, b) => a + b, 0) / greenHues.length;
+    const variance = greenHues.reduce((a, b) => a + Math.pow(b - avgH, 2), 0) / greenHues.length;
+    hueStd = Math.sqrt(variance);
+  }
+
+  if (blueRatio > 0.30 && foliageRatio < 0.20) {
     showInvalidLeafResult(state.lang === 'hi' ? 'स्क्रीन, आसमान या नीली वस्तु पहचानी गई। केवल पौधे की पत्ती अपलोड करें।' : 'Detected sky, digital screen, or non-botanical blue surface. Please upload a clear crop leaf photo.');
     return;
   }
 
-  if (foliageRatio < 0.06) {
+  if (foliageRatio < 0.12) {
     showInvalidLeafResult(state.lang === 'hi' ? 'गैर-पौधे की वस्तु पहचानी गई। केवल फसल की पत्ती की फोटो अपलोड करें।' : 'Non-plant object detected. Please capture a close, well-lit crop leaf photo.');
+    return;
+  }
+
+  // Reject synthetic painted objects / green cars
+  if ((specularRatio > 0.08 && textureComplexity < 0.35) || (hueStd < 3.2 && foliageRatio > 0.40 && textureComplexity < 0.32)) {
+    showInvalidLeafResult(state.lang === 'hi' ? 'कृत्रिम रंग, गाड़ी या धातु की सतह पहचानी गई। कृपया असली फसल की पत्ती की फोटो अपलोड करें।' : 'Synthetic painted object or vehicle detected. Please upload a real botanical crop leaf.');
     return;
   }
 

@@ -18,343 +18,669 @@ from disease_info import DISEASE_DATA, get_disease_info
 import sih_pillars_addon
 
 # ----------------------------------------------------------------------------
-# 0. PAGE CONFIGURATION
+# 0. PAGE CONFIGURATION (Mobile App Viewport)
 # ----------------------------------------------------------------------------
 st.set_page_config(
-    page_title="Kisan Mitra — AI Crop Doctor",
+    page_title="Kisan Mitra — AI Precision Crop Doctor",
     page_icon="🌿",
     layout="centered",
     initial_sidebar_state="collapsed"
 )
 
 # ----------------------------------------------------------------------------
-# THEME — Responsive, Subtle-Toned (No Stark White) Dark Forest & Earth Palette
+# THEME — Frosted Glassmorphism Mobile-Optimized Design System
 # ----------------------------------------------------------------------------
-THEME_CSS = """
+GLASS_THEME_CSS = """
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap');
 
 :root {
-  --km-bg-dark: #071510;
-  --km-card-bg: #10241C;
-  --km-card-border: rgba(149, 213, 178, 0.16);
-  --km-emerald: #0D7A70;
-  --km-emerald-hover: #095F57;
-  --km-terracotta: #A54B34;
-  --km-terracotta-dark: #7F3421;
-  --km-text-main: #E6F3EE;
-  --km-text-sub: #A3B8B0;
-  --km-gold: #DCA538;
+  /* Earthy Precision Glass — Deep Forest Palette */
+  --km-bg: #081611;
+  --km-surface: rgba(8, 22, 17, 0.6);
+  --km-surface-container: #14221d;
+  --km-surface-container-low: #101e19;
+  --km-surface-container-high: #1f2d27;
+  --km-surface-container-highest: #293832;
+  --km-surface-bright: #2e3c36;
+  --km-primary: #7dd6ca;
+  --km-primary-container: #0d7a70;
+  --km-on-primary: #003732;
+  --km-on-primary-container: #acfff3;
+  --km-secondary: #ffb4a2;
+  --km-secondary-container: #7f2f1a;
+  --km-on-secondary: #5e1705;
+  --km-tertiary: #f7bd4e;
+  --km-tertiary-container: #8f6500;
+  --km-error: #ffb4ab;
+  --km-error-container: #93000a;
+  --km-on-error-container: #ffdad6;
+  --km-on-surface: #d6e6dd;
+  --km-on-surface-variant: #bdc9c6;
+  --km-outline: #889390;
+  --km-outline-variant: #3e4947;
+  --km-glass-border: rgba(125, 214, 202, 0.2);
+  --km-glass-border-light: rgba(125, 214, 202, 0.35);
+  --km-glass-card-bg: rgba(13, 122, 112, 0.15);
+  --km-glass-blur: blur(40px);
 }
 
 html, body, [data-testid="stAppViewContainer"] {
-  background:
-    radial-gradient(circle at 10% 10%, rgba(13, 122, 112, 0.22), transparent 40%),
-    radial-gradient(circle at 90% 85%, rgba(165, 75, 52, 0.18), transparent 45%),
-    linear-gradient(180deg, #071510 0%, #0C2119 50%, #07140F 100%) !important;
-  color: var(--km-text-main);
-  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: #081611 !important;
+  background-image:
+    linear-gradient(to bottom, rgba(8, 22, 17, 0.8), rgba(8, 22, 17, 0.95)),
+    url('https://lh3.googleusercontent.com/aida-public/AB6AXuBOp55tEUenrJNVAw8j15lavmwFbHJ5k-4YpJkkmmD_AKM0Jm0qHAHOI0sKzuRvl_5QoS_72vDlHDUpJq5nzDuagM_TaombnLqe9FZBmY1U3obl5N_Le9O9cnv43XPuZf58m1z43tJCy3eyFp7lj4qSe6-o16S_vMwaREdUU5fYnHftCSZ-iO51OkGj91y0d2XjexYuqWbRJ95t2PaGNzyz5p2yP6f5hT5nfxn5UccO8aMs-I3hv7-Q') !important;
+  background-size: cover !important;
+  background-position: center !important;
+  background-attachment: fixed !important;
+  color: var(--km-on-surface) !important;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif !important;
+  letter-spacing: 0 !important;
 }
 
-[data-testid="stHeader"] { background: transparent; }
+[data-testid="stHeader"] {
+  background: rgba(8, 22, 17, 0.80) !important;
+  backdrop-filter: blur(40px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(40px) saturate(180%) !important;
+  border-bottom: 1px solid rgba(255,255,255,0.05) !important;
+}
+
+/* Mobile App Viewport Framing */
 section.main .block-container {
-  max-width: 960px;
+  max-width: 680px !important;
   width: 100%;
-  padding-top: 0.5rem;
+  padding-top: 0.65rem;
   padding-bottom: 3.5rem;
-  padding-left: clamp(0.75rem, 3vw, 1.5rem);
-  padding-right: clamp(0.75rem, 3vw, 1.5rem);
+  padding-left: clamp(0.75rem, 3.5vw, 1.25rem);
+  padding-right: clamp(0.75rem, 3.5vw, 1.25rem);
+  margin: 0 auto;
 }
 
-/* Navbar */
-.km-navbar {
-  background: linear-gradient(135deg, var(--km-terracotta) 0%, var(--km-terracotta-dark) 100%);
-  padding: 0.85rem clamp(1rem, 3vw, 1.4rem);
-  border-radius: 18px 18px 0 0;
+/* ═══════ Welcome / Splash Screen ═══════ */
+.km-welcome-wrapper {
+  position: relative;
+  width: 100%;
+  min-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding-bottom: 2.5rem;
+  overflow: hidden;
+  border-radius: 24px;
+}
+.km-welcome-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: 24px;
+  overflow: hidden;
+}
+.km-welcome-bg img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.km-welcome-bg .km-welcome-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(8,22,17,0.85) 0%, rgba(8,22,17,0.25) 40%, transparent 70%);
+}
+.km-welcome-card {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  max-width: 400px;
+  background: var(--km-surface);
+  backdrop-filter: blur(40px) saturate(180%);
+  -webkit-backdrop-filter: blur(40px) saturate(180%);
+  border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 2.5rem;
+  padding: 2.5rem 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  box-shadow: 0 32px 64px rgba(0,0,0,0.3);
+}
+.km-welcome-pretitle {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--km-on-surface-variant);
+  margin-bottom: 0.15rem;
+}
+.km-welcome-title {
+  font-family: 'Fraunces', serif;
+  font-size: clamp(2.2rem, 8vw, 3rem);
+  font-weight: 700;
+  color: var(--km-primary);
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  margin-bottom: 0.45rem;
+}
+.km-welcome-sub {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--km-on-surface-variant);
+  margin-bottom: 2rem;
+}
+.km-welcome-leaf {
+  display: inline-block;
+  margin-bottom: 0.5rem;
+  font-size: 1.6rem;
+}
+
+/* ═══════ Glass Top App Bar ═══════ */
+.km-glass-app-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(8, 22, 17, 0.50);
+  backdrop-filter: blur(40px) saturate(180%);
+  -webkit-backdrop-filter: blur(40px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 0.65rem 1.15rem;
+  border-radius: 0;
+  margin-bottom: 1rem;
+  margin-left: calc(-1 * clamp(0.75rem, 3.5vw, 1.25rem));
+  margin-right: calc(-1 * clamp(0.75rem, 3.5vw, 1.25rem));
+  margin-top: -0.65rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+.km-brand-wrap {
   display: flex;
   align-items: center;
   gap: 0.6rem;
-  color: #FFFFFF;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
 }
-.km-navbar-logo { font-size: 1.3rem; }
-.km-navbar-title {
-  font-weight: 800;
-  font-size: clamp(1rem, 3.5vw, 1.2rem);
-  letter-spacing: -0.01em;
-}
-.km-navbar-badge {
-  margin-left: auto;
-  font-size: 0.72rem;
-  background: rgba(255, 255, 255, 0.18);
-  border: 1px solid rgba(255, 255, 255, 0.22);
-  padding: 0.2rem 0.65rem;
-  border-radius: 999px;
-  font-weight: 600;
-  white-space: nowrap;
-}
-
-/* Hero Section */
-.km-hero-card {
-  background:
-    radial-gradient(circle at 80% 20%, rgba(13, 122, 112, 0.4), transparent 50%),
-    linear-gradient(145deg, #122B22 0%, #0B1C16 100%);
-  padding: clamp(1.6rem, 4vw, 2.4rem) clamp(1rem, 3vw, 1.6rem);
-  border-radius: 0 0 20px 20px;
-  text-align: center;
-  color: #FFFFFF;
-  margin-bottom: 1.6rem;
-  border: 1px solid var(--km-card-border);
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
-}
-.km-hero-title {
-  font-weight: 800;
-  font-size: clamp(1.45rem, 5vw, 2rem);
-  line-height: 1.2;
-  margin-bottom: 0.5rem;
-  color: #FFFFFF;
-}
-.km-hero-sub {
-  font-size: clamp(0.85rem, 2.5vw, 0.95rem);
-  color: #B2C8C0;
-  max-width: 480px;
-  margin: 0 auto 1.3rem auto;
-  line-height: 1.45;
-}
-.km-try-btn {
-  display: inline-block;
-  background: linear-gradient(135deg, #E2A737 0%, #C48518 100%);
-  color: #1A1305 !important;
-  font-weight: 800;
-  padding: 0.65rem clamp(1.5rem, 4vw, 2.2rem);
-  border-radius: 999px;
-  font-size: clamp(0.88rem, 2.5vw, 0.95rem);
-  text-decoration: none;
-  box-shadow: 0 4px 16px rgba(226, 167, 55, 0.35);
-  transition: all 0.2s ease;
-}
-.km-try-btn:hover { transform: translateY(-2px); }
-
-/* How it works 4-Step Grid (Responsive 4-col on desktop, 2x2 on mobile) */
-.km-how-title {
-  text-align: center;
-  font-weight: 800;
-  font-size: clamp(1.05rem, 3vw, 1.2rem);
-  margin-bottom: 1rem;
-  color: #DFECE7;
-}
-.km-how-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 0.6rem;
-  margin-bottom: 1.8rem;
-}
-@media (max-width: 600px) {
-  .km-how-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 0.5rem;
-  }
-}
-.km-how-item {
-  background: rgba(16, 36, 28, 0.85);
-  backdrop-filter: blur(8px);
-  border: 1px solid var(--km-card-border);
-  border-radius: 14px;
-  padding: 0.9rem 0.5rem;
-  text-align: center;
-}
-.km-how-icon-circle {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: rgba(165, 75, 52, 0.22);
-  color: #FF9E87;
-  border: 1px solid rgba(165, 75, 52, 0.4);
+.km-glass-logo {
+  font-size: 1.5rem;
+  width: 32px;
+  height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.15rem;
-  margin: 0 auto 0.5rem auto;
 }
-.km-how-label { font-weight: 700; font-size: 0.82rem; color: #FFFFFF; margin-bottom: 0.2rem; }
-.km-how-desc { font-size: 0.72rem; color: #9AB2AA; line-height: 1.3; }
+.km-brand-name {
+  font-family: 'Fraunces', serif;
+  font-weight: 700;
+  font-size: 1.3rem;
+  color: var(--km-primary);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+.km-brand-sub {
+  font-size: 0.7rem;
+  color: var(--km-on-surface-variant);
+  font-weight: 500;
+}
+.km-glass-status {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--km-primary);
+  background: rgba(13, 122, 112, 0.15);
+  border: 1px solid rgba(125, 214, 202, 0.25);
+  padding: 0.25rem 0.7rem;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.km-status-beacon {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--km-primary);
+  box-shadow: 0 0 8px var(--km-primary);
+  animation: pulse-beacon 2s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+}
+@keyframes pulse-beacon {
+  0% { transform: scale(0.8); opacity: 0.5; }
+  80%, 100% { transform: scale(2); opacity: 0; }
+}
 
-/* Subtle Matte Container Card */
-.km-section-card {
-  background: var(--km-card-bg);
-  border: 1px solid var(--km-card-border);
-  border-radius: 18px;
-  padding: clamp(1.1rem, 3vw, 1.5rem);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
-  margin-bottom: 1.5rem;
+/* ═══════ Earthy Glass Card Architecture ═══════ */
+.km-glass-card {
+  background: var(--km-glass-card-bg) !important;
+  backdrop-filter: var(--km-glass-blur) !important;
+  -webkit-backdrop-filter: var(--km-glass-blur) !important;
+  border: 1px solid var(--km-glass-border) !important;
+  border-radius: 1rem !important;
+  padding: clamp(1rem, 3.5vw, 1.5rem);
+  margin-bottom: 1rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.37) !important;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.25s ease;
 }
-.km-card-header { text-align: center; margin-bottom: 1.1rem; }
-.km-card-title {
-  font-weight: 800;
-  font-size: clamp(1.15rem, 3.5vw, 1.35rem);
+.km-glass-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(125,214,202,0.4), transparent);
+  pointer-events: none;
+}
+
+/* ═══════ Glass Hero Banner ═══════ */
+.km-glass-hero {
+  background: var(--km-glass-card-bg);
+  backdrop-filter: var(--km-glass-blur);
+  -webkit-backdrop-filter: var(--km-glass-blur);
+  border: 1px solid var(--km-glass-border);
+  border-radius: 1rem;
+  padding: clamp(1.2rem, 3.5vw, 1.6rem) clamp(1rem, 3vw, 1.35rem);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 1rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+.km-glass-hero::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(125, 214, 202, 0.1) 0%, transparent 50%);
+  pointer-events: none;
+}
+.km-hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--km-primary);
+  background: rgba(13, 122, 112, 0.15);
+  border: 1px solid rgba(125, 214, 202, 0.25);
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  margin-bottom: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.km-hero-title {
+  font-family: 'Fraunces', serif;
+  font-weight: 600;
+  font-size: clamp(1.55rem, 5vw, 2rem);
+  line-height: 1.24;
   color: #FFFFFF;
+  margin-bottom: 0.45rem;
+  letter-spacing: -0.02em;
+}
+.km-hero-sub {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: clamp(0.82rem, 2.5vw, 0.9rem);
+  color: var(--km-on-surface-variant);
+  max-width: 520px;
+  margin: 0 auto 1.1rem auto;
+  line-height: 1.55;
+}
+
+/* ═══════ Glass Pipeline Strip ═══════ */
+.km-pipeline {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+@media (max-width: 520px) {
+  .km-pipeline {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.45rem;
+  }
+}
+.km-pipe-node {
+  background: rgba(20, 34, 29, 0.5);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--km-outline-variant);
+  border-radius: 1rem;
+  padding: 0.65rem 0.4rem;
+  text-align: center;
+  transition: all 0.2s ease;
+}
+.km-pipe-node:hover {
+  background: rgba(13, 122, 112, 0.12);
+  border-color: var(--km-glass-border-light);
+}
+.km-pipe-icon {
+  font-size: 1.15rem;
   margin-bottom: 0.2rem;
 }
-.km-card-subtitle {
-  font-size: clamp(0.82rem, 2.5vw, 0.88rem);
-  color: var(--km-text-sub);
+.km-pipe-title {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 700;
+  font-size: 0.76rem;
+  color: var(--km-on-surface);
+}
+.km-pipe-sub {
+  font-size: 0.66rem;
+  color: var(--km-outline);
 }
 
-/* Dropzone styling with subtle tones */
-[data-testid="stFileUploaderDropzone"] {
-  background: rgba(8, 22, 17, 0.75) !important;
-  border: 2px dashed #0D7A70 !important;
-  border-radius: 14px !important;
-  padding: clamp(1rem, 3vw, 1.5rem) !important;
-  color: #E2ECE8 !important;
+/* ═══════ Card Header ═══════ */
+.km-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.95rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--km-outline-variant);
+}
+.km-card-title {
+  font-family: 'Fraunces', serif;
+  font-weight: 600;
+  font-size: clamp(1.1rem, 3vw, 1.25rem);
+  color: var(--km-primary);
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+.km-card-sub {
+  font-size: 0.78rem;
+  color: var(--km-on-surface-variant);
 }
 
-/* Subtle Streamlit inputs */
+/* ═══════ Glass Dropzone & Form Controls ═══════ */
+[data-testid="stFileUploaderDropzone"], [data-testid="stCameraInput"] {
+  background: rgba(20, 34, 29, 0.5) !important;
+  backdrop-filter: blur(24px) !important;
+  border: 2px dashed var(--km-outline-variant) !important;
+  border-radius: 1rem !important;
+  padding: 1.2rem 1rem !important;
+  transition: all 0.3s ease !important;
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+}
+[data-testid="stFileUploaderDropzone"]:hover {
+  border-color: var(--km-primary) !important;
+  background: rgba(13, 122, 112, 0.08) !important;
+  box-shadow: 0 0 20px rgba(125, 214, 202, 0.15) !important;
+}
 .stTextInput input, .stSelectbox [data-baseweb="select"] {
-  background: #0B1C16 !important;
-  color: #E6F3EE !important;
-  border-color: #1A3E31 !important;
-  border-radius: 10px !important;
+  background: rgba(20, 34, 29, 0.5) !important;
+  backdrop-filter: blur(12px) !important;
+  color: var(--km-on-surface) !important;
+  border: 1px solid var(--km-outline-variant) !important;
+  border-radius: 1rem !important;
+  font-size: 0.88rem !important;
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+}
+.stTextInput input:focus, .stSelectbox [data-baseweb="select"]:focus {
+  border-color: var(--km-primary) !important;
+  box-shadow: 0 0 12px rgba(125, 214, 202, 0.25) !important;
 }
 
-/* Primary Button Styling */
+/* ═══════ Primary Button — Terracotta Gradient ═══════ */
 .stButton>button {
-  background: linear-gradient(135deg, var(--km-emerald) 0%, var(--km-emerald-hover) 100%) !important;
+  background: linear-gradient(135deg, var(--km-secondary-container), #631906) !important;
   color: #FFFFFF !important;
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
   font-weight: 700 !important;
-  border: none !important;
-  border-radius: 12px !important;
-  padding: 0.75rem 1.4rem !important;
-  font-size: clamp(0.92rem, 2.5vw, 1rem) !important;
+  border: 1px solid rgba(255, 180, 162, 0.20) !important;
+  border-radius: 999px !important;
+  padding: 0.7rem 1.5rem !important;
+  font-size: 0.88rem !important;
+  letter-spacing: 0.01em !important;
   width: 100% !important;
-  box-shadow: 0 4px 16px rgba(13, 122, 112, 0.3) !important;
-  transition: all 0.2s ease !important;
+  box-shadow: 0 4px 12px rgba(255, 180, 162, 0.2) !important;
+  transition: all 0.3s ease !important;
 }
 .stButton>button:hover {
   transform: translateY(-1px) !important;
-  box-shadow: 0 6px 20px rgba(13, 122, 112, 0.4) !important;
+  box-shadow: inset 0 0 15px rgba(255, 255, 255, 0.2), 0 6px 18px rgba(255, 180, 162, 0.3) !important;
 }
 
-/* Result Stack (Subtle Tints) */
-.km-result-stack {
+/* ═══════ Secondary / Outline Button ═══════ */
+.km-btn-outline {
+  background: transparent !important;
+  border: 1.5px solid var(--km-primary) !important;
+  color: var(--km-primary) !important;
+  border-radius: 999px;
+  padding: 0.6rem 1.4rem;
+  font-weight: 600;
+  font-size: 0.88rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.km-btn-outline:hover {
+  background: rgba(125, 214, 202, 0.1) !important;
+}
+
+/* ═══════ Diagnostic Report ═══════ */
+.km-diag-grid {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
 }
-.km-result-row {
-  border-radius: 12px;
-  padding: 0.9rem 1.1rem;
-  display: flex;
-  flex-direction: column;
+.km-glass-pill {
+  background: var(--km-glass-card-bg);
+  backdrop-filter: var(--km-glass-blur);
+  border: 1px solid var(--km-glass-border);
+  border-radius: 1rem;
+  padding: 1rem 1.15rem;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.37);
 }
-.km-result-row-title {
-  font-size: 0.72rem;
+.km-glass-pill::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(125,214,202,0.08) 0%, transparent 50%);
+  pointer-events: none;
+}
+.km-glass-pill.danger {
+  background: rgba(147, 0, 10, 0.15);
+  border-color: rgba(255, 180, 171, 0.30);
+}
+.km-glass-pill.danger::before {
+  background: linear-gradient(135deg, rgba(255, 180, 171, 0.08) 0%, transparent 50%);
+}
+.km-glass-pill.healthy {
+  background: rgba(13, 122, 112, 0.15);
+  border-color: rgba(125, 214, 202, 0.30);
+}
+
+.km-diag-header-tag {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.68rem;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  font-weight: 800;
-  margin-bottom: 0.25rem;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.35rem;
 }
-.km-result-row-value {
-  font-weight: 800;
-  font-size: clamp(1.05rem, 3.5vw, 1.25rem);
-  line-height: 1.25;
+.km-glass-pill.danger .km-diag-header-tag { color: var(--km-error); }
+.km-glass-pill.healthy .km-diag-header-tag { color: var(--km-primary); }
+
+.km-diag-name {
+  font-family: 'Fraunces', serif;
+  font-weight: 600;
+  font-size: clamp(1.15rem, 3.5vw, 1.35rem);
+  color: var(--km-on-surface);
+  line-height: 1.3;
 }
-.km-result-row-sub {
-  font-size: 0.84rem;
-  margin-top: 0.35rem;
-  line-height: 1.45;
+.km-diag-desc {
+  font-size: 0.85rem;
+  color: var(--km-on-surface-variant);
+  margin-top: 0.4rem;
+  line-height: 1.5;
 }
 
-/* Subtle Result Tints */
-.km-row-disease {
-  background: rgba(165, 75, 52, 0.16);
-  border: 1.5px solid rgba(224, 114, 88, 0.42);
-  color: #FFE6DF;
+/* ═══════ Confidence Gauge — Harvest Gold Ring ═══════ */
+.km-conf-container {
+  margin: 0.55rem 0 0.2rem 0;
 }
-.km-row-disease .km-result-row-title { color: #FF9E87; }
-
-.km-row-confidence {
-  background: rgba(13, 122, 112, 0.18);
-  border: 1.5px solid rgba(13, 170, 155, 0.45);
-  color: #E2FAF6;
+.km-conf-bar-bg {
+  background: var(--km-surface-container-highest);
+  border-radius: 999px;
+  height: 8px;
+  width: 100%;
+  overflow: hidden;
 }
-.km-row-confidence .km-result-row-title { color: #5CE0D0; }
-
-.km-row-advice {
-  background: rgba(184, 115, 20, 0.16);
-  border: 1.5px solid rgba(229, 169, 60, 0.42);
-  color: #FFF2D6;
+.km-conf-bar-fill {
+  background: linear-gradient(90deg, var(--km-primary) 0%, var(--km-tertiary) 100%);
+  height: 100%;
+  border-radius: 999px;
+  box-shadow: 0 0 8px rgba(247, 189, 78, 0.5);
 }
-.km-row-advice .km-result-row-title { color: #F7CA75; }
 
-/* Error Box (2b) */
-.km-error-box {
-  background: rgba(217, 4, 41, 0.14);
-  border: 1.5px solid rgba(255, 100, 120, 0.45);
-  border-radius: 14px;
+/* ═══════ Microclimate Weather Ribbon ═══════ */
+.km-weather-ribbon {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-bottom: 0.8rem;
+}
+.km-w-chip {
+  background: rgba(20, 34, 29, 0.5);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--km-outline-variant);
+  border-radius: 999px;
+  padding: 0.32rem 0.8rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--km-on-surface);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+/* ═══════ Glass Chat Container ═══════ */
+.km-chat-container {
+  background: var(--km-glass-card-bg);
+  backdrop-filter: var(--km-glass-blur);
+  -webkit-backdrop-filter: var(--km-glass-blur);
+  border: 1px solid var(--km-glass-border);
+  border-radius: 1rem;
   padding: 1.15rem;
+  margin-top: 1rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+.km-chat-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(125,214,202,0.4), transparent);
+  pointer-events: none;
+}
+[data-testid="stChatMessage"] {
+  background: rgba(20, 34, 29, 0.45) !important;
+  backdrop-filter: blur(12px) !important;
+  border: 1px solid var(--km-outline-variant) !important;
+  border-radius: 1rem !important;
+  margin-bottom: 0.5rem !important;
+  padding: 0.75rem 1rem !important;
+}
+
+/* ═══════ Glass Tabs — Earthy Nav Bar ═══════ */
+[data-testid="stTabs"] {
+  margin-bottom: 1rem;
+}
+[data-baseweb="tab-list"] {
+  background: rgba(8, 22, 17, 0.50) !important;
+  backdrop-filter: blur(40px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(40px) saturate(180%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.05) !important;
+  padding: 4px !important;
+  border-radius: 1rem !important;
+  gap: 3px !important;
+  box-shadow: 0 8px 26px rgba(0, 0, 0, 0.25) !important;
+  overflow-x: auto !important;
+}
+[data-baseweb="tab"] {
+  border-radius: 0.75rem !important;
+  color: var(--km-on-surface-variant) !important;
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+  font-weight: 600 !important;
+  font-size: 0.78rem !important;
+  padding: 0.45rem 0.85rem !important;
+  border: 1px solid transparent !important;
+  background: transparent !important;
+  white-space: nowrap !important;
+  transition: all 0.2s ease !important;
+}
+[data-baseweb="tab"]:hover {
+  color: var(--km-on-surface) !important;
+  background: rgba(125, 214, 202, 0.06) !important;
+}
+[aria-selected="true"] {
+  background: var(--km-primary-container) !important;
+  color: var(--km-on-primary-container) !important;
+  border: 1px solid transparent !important;
+  font-weight: 700 !important;
+  box-shadow: 0 2px 8px rgba(13, 122, 112, 0.3) !important;
+}
+
+/* ═══════ Glass Error Alert ═══════ */
+.km-glass-error {
+  background: rgba(147, 0, 10, 0.15);
+  backdrop-filter: blur(24px);
+  border: 1.5px solid rgba(255, 180, 171, 0.30);
+  border-radius: 1rem;
+  padding: 1.2rem;
   text-align: center;
-  color: #FFCCD4;
+  margin-bottom: 1rem;
+  box-shadow: 0 8px 24px rgba(147, 0, 10, 0.15);
+  position: relative;
+  overflow: hidden;
+}
+.km-glass-error::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(255,180,171,0.4), transparent);
+  pointer-events: none;
 }
 .km-error-badge {
   display: inline-block;
-  background: #D90429;
-  color: #FFFFFF;
-  font-weight: 800;
-  font-size: 0.72rem;
-  padding: 0.2rem 0.7rem;
+  background: var(--km-error-container);
+  color: var(--km-on-error-container);
+  font-weight: 700;
+  font-size: 0.68rem;
+  padding: 0.2rem 0.75rem;
   border-radius: 999px;
-  margin-bottom: 0.4rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-}
-.km-error-msg { font-weight: 800; font-size: 1rem; margin-bottom: 0.25rem; color: #FFFFFF; }
-.km-error-sub { font-size: 0.82rem; color: #FFB3BE; line-height: 1.4; }
-
-/* Weather Pill */
-.km-weather-pill {
-  background: rgba(13, 122, 112, 0.22);
-  border: 1px solid rgba(13, 122, 112, 0.45);
-  padding: 0.35rem 0.75rem;
-  border-radius: 999px;
-  font-size: 0.8rem;
-  font-weight: 700;
-  color: #C6F5EC;
-  white-space: nowrap;
+  margin-bottom: 0.4rem;
+  border: 1px solid rgba(255, 180, 171, 0.2);
 }
 
-/* Chat Assistant Panel */
-.km-chat-box {
-  background: var(--km-card-bg);
-  border: 1px solid var(--km-card-border);
-  border-radius: 18px;
-  overflow: hidden;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.25);
-  margin-top: 1.8rem;
+/* ═══════ Global Overrides ═══════ */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Fraunces', serif !important;
+  color: var(--km-on-surface) !important;
 }
-.km-chat-header {
-  background: linear-gradient(135deg, var(--km-terracotta) 0%, var(--km-terracotta-dark) 100%);
-  padding: 0.85rem 1.2rem;
-  color: #FFFFFF;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-[data-testid="stChatMessage"] {
-  background: #0E221A !important;
-  border-radius: 12px !important;
-  border: 1px solid #1C4435 !important;
-  margin-bottom: 0.45rem !important;
-  color: #E2ECE8 !important;
+p, span, div, label {
+  font-family: 'Plus Jakarta Sans', sans-serif;
 }
 [data-testid="stSidebar"] {
-  background: #081611 !important;
-  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--km-surface-container-low) !important;
+  border-right: 1px solid var(--km-outline-variant) !important;
 }
 </style>
 """
-st.markdown(THEME_CSS, unsafe_allow_html=True)
+st.markdown(GLASS_THEME_CSS, unsafe_allow_html=True)
 
 # ----------------------------------------------------------------------------
 # LOCALIZATION (English & Hindi)
@@ -362,67 +688,73 @@ st.markdown(THEME_CSS, unsafe_allow_html=True)
 TEXT = {
     "en": {
         "app_name": "Kisan Mitra",
-        "app_tagline": "AI Crop Doctor",
-        "hero_title": "Try our AI Powered Disease Detection",
-        "hero_sub": "Upload a leaf photo for instant deep learning disease diagnosis, tailored treatment, and live weather outbreak risk.",
-        "try_now": "Try Now ↓",
-        "how_title": "How it works?",
-        "how1_title": "1. Click a Pic",
-        "how1_desc": "Take a clear close photo of your leaf",
-        "how2_title": "2. AI Detection",
-        "how2_desc": "Neural network scans leaf tissue",
+        "app_tagline": "AI Precision Crop Doctor",
+        "system_ready": "AI Model Ready",
+        "hero_badge": "ResNet-50 Vision • Outbreak Radar",
+        "hero_title": "Instant AI Crop Disease Diagnosis",
+        "hero_sub": "Scan plant leaves for instant pathology classification across 38+ crop conditions, tailored curative treatment, and microclimate risk alerts.",
+        "how_title": "Diagnostic Workflow",
+        "how1_title": "1. Leaf Scan",
+        "how1_desc": "Camera / Upload",
+        "how2_title": "2. Neural Net",
+        "how2_desc": "Tissue scan",
         "how3_title": "3. Diagnosis",
-        "how3_desc": "Identifies disease with confidence score",
-        "how4_title": "4. Chat & Cure",
-        "how4_desc": "Get expert remedies & weather alert",
-        "upload_title": "Upload Leaf Image",
-        "upload_sub": "Upload an image of your plant leaf for AI analysis",
-        "detect_btn": "Detect Disease",
-        "results_title": "Analysis Results",
-        "disease_identified": "Disease Identified",
+        "how3_desc": "Identifies pathogen",
+        "how4_title": "4. Treatment",
+        "how4_desc": "Prescription & Chat",
+        "camera_tab": "📷 Phone Camera (Snap Photo)",
+        "upload_tab": "📁 Gallery / File Upload",
+        "upload_title": "Leaf Scanner",
+        "upload_sub": "Use your phone camera or upload a clear leaf photo for neural network analysis",
+        "detect_btn": "Diagnose Crop Disease",
+        "results_title": "Diagnostic Report",
+        "disease_identified": "Pathology Identified",
         "confidence_level": "Confidence Level",
-        "expert_advice": "Expert Advice",
-        "invalid_photo_title": "Incorrect Image Type Uploaded",
-        "invalid_photo_badge": "Error / Try Again",
-        "invalid_photo_msg": "This photo does not appear to be a valid crop leaf.",
-        "invalid_photo_sub": "Please upload a clear, focused photo of a single plant leaf in good lighting.",
-        "weather_title": "Live Weather & Outbreak Risk",
-        "planting_title": "Planting & Sowing Guidance",
-        "listen_btn": "🔊 Listen to Advice",
-        "chat_title": "Kisan Mitra AI Assistant",
-        "chat_placeholder": "Ask about plant problems, spray dosages, fertilizers...",
+        "expert_advice": "Clinical Treatment Plan",
+        "invalid_photo_title": "Non-Crop Image Detected",
+        "invalid_photo_badge": "Validation Alert",
+        "invalid_photo_msg": "The image uploaded does not contain sufficient organic crop leaf tissue.",
+        "invalid_photo_sub": "Please take a close, well-lit photo of a single crop leaf.",
+        "weather_title": "Microclimate & Outbreak Forecast",
+        "planting_title": "Sowing & Agricultural Advisory",
+        "listen_btn": "🔊 Voice Prescription",
+        "chat_title": "Kisan Mitra Clinical AI Assistant",
+        "chat_placeholder": "Ask about spray dosages, organic remedies, PHI wait times...",
     },
     "hi": {
         "app_name": "किसान मित्र",
-        "app_tagline": "एआई फसल डॉक्टर",
-        "hero_title": "एआई द्वारा फसल रोग पहचानें",
-        "hero_sub": "पत्ती की फोटो अपलोड करें और तुरंत 38+ फसल रोगों की पहचान, उपचार व मौसम आधारित पूर्वानुमान पाएं।",
-        "try_now": "अभी जांचें ↓",
-        "how_title": "यह कैसे काम करता है?",
+        "app_tagline": "एआई फसल डॉक्टर व सर्विलांस",
+        "system_ready": "एआई इंजन तैयार",
+        "hero_badge": "न्यूरल विजन • लाइव मौसम रडार",
+        "hero_title": "एआई द्वारा सटीक फसल रोग जांच",
+        "hero_sub": "पत्ती की फोटो खींचें और 38+ फसल रोगों की तुरंत पहचान, विशेषज्ञ दवा उपचार, छिड़काव खुराक व मौसम आधारित चेतावनी पाएं।",
+        "how_title": "जांच प्रक्रिया",
         "how1_title": "1. फोटो लें",
-        "how1_desc": "पत्ती की स्पष्ट फोटो खींचें",
+        "how1_desc": "कैमरा / गैलरी",
         "how2_title": "2. एआई जांच",
-        "how2_desc": "न्यूरल नेटवर्क पत्ती की जांच करता है",
-        "how3_title": "3. रोग पहचान",
-        "how3_desc": "सटीक रोग व विश्वसनीयता स्तर",
-        "how4_title": "4. उपचार व चैट",
-        "how4_desc": "दवा, छिड़काव व मौसम सलाह",
-        "upload_title": "पत्ती की फोटो अपलोड करें",
-        "upload_sub": "एआई द्वारा सटीक जांच हेतु फसल की पत्ती की फोटो दें",
-        "detect_btn": "रोग की पहचान करें",
-        "results_title": "जांच परिणाम",
+        "how2_desc": "न्यूरल विश्लेषण",
+        "how3_title": "3. रोग रिपोर्ट",
+        "how3_desc": "सटीक परिणाम",
+        "how4_title": "4. समाधान",
+        "how4_desc": "दवा व सलाह",
+        "camera_tab": "📷 मोबाइल कैमरा (लाइव फोटो लें)",
+        "upload_tab": "📁 गैलरी से फोटो चुनें",
+        "upload_title": "लीफ स्कैनर",
+        "upload_sub": "फोन कैमरे से फोटो खींचें या गैलरी से फसल की पत्ती अपलोड करें",
+        "detect_btn": "फसल रोग की पहचान करें",
+        "results_title": "रोग निदान रिपोर्ट",
         "disease_identified": "पहचाना गया रोग",
         "confidence_level": "विश्वसनीयता स्तर",
-        "expert_advice": "विशेषज्ञ सलाह व उपचार",
+        "expert_advice": "उपचार व छिड़काव सलाह",
         "invalid_photo_title": "अमान्य फोटो अपलोड हुई",
-        "invalid_photo_badge": "त्रुटि / पुनः प्रयास करें",
+        "invalid_photo_badge": "जांच सूचना",
         "invalid_photo_msg": "अपलोड की गई फोटो किसी फसल की पत्ती की प्रतीत नहीं होती।",
         "invalid_photo_sub": "कृपया अच्छी रोशनी में केवल फसल की पत्ती की स्पष्ट फोटो अपलोड करें।",
-        "weather_title": "लाइव मौसम व प्रकोप जोखिम",
+        "weather_title": "लाइव मौसम व रोग प्रकोप जोखिम",
         "planting_title": "बुवाई व कृषि कैलेंडर सलाह",
         "listen_btn": "🔊 बोलकर सुनें",
         "chat_title": "किसान मित्र एआई सहायक",
-        "chat_placeholder": "फसल रोग, दवा, खाद या बुवाई के बारे में पूछें...",
+        "chat_placeholder": "फसल रोग, दवा की खुराक या जैविक उपचार के बारे में पूछें...",
     }
 }
 
@@ -445,43 +777,101 @@ def load_vision_model():
     return None, None
 
 
-def is_valid_crop_leaf(image: Image.Image):
+def is_valid_crop_leaf(image: Image.Image, lang: str = "en"):
     """
-    Robust botanical leaf validation:
-    1. HSV space analysis for natural chlorophyll (greens), chlorosis (yellows), and necrosis (browns/reds).
-    2. Allows leaves on standard studio backgrounds (white, gray, black as in PlantVillage) and field soil.
-    3. Rejects non-organic digital UI screens or completely blank/solid color images.
+    Advanced Botanical Leaf Validation & Synthetic Non-Plant Object (OOD) Filter.
+    Rejects green cars, plastic toys, painted walls, textiles, animals, screens, and vehicles.
     """
     img_rgb = image.convert("RGB")
-    
-    # 1. HSV Botanical Analysis
-    hsv = img_rgb.convert("HSV")
-    hsv_arr = np.asarray(hsv.resize((224, 224))).astype("float32")
-    h = hsv_arr[..., 0] / 255.0 * 360.0  # 0 to 360 degrees
-    s = hsv_arr[..., 1] / 255.0          # 0 to 1
-    v = hsv_arr[..., 2] / 255.0          # 0 to 1
+    arr_224 = np.asarray(img_rgb.resize((224, 224)), dtype=np.float32) / 255.0
+    r, g, b = arr_224[..., 0], arr_224[..., 1], arr_224[..., 2]
 
-    # Organic Green & Yellow-Green foliage: Hue 28-175°, Saturation >= 0.08, Value >= 0.08
-    green_foliage = (h >= 28) & (h <= 175) & (s >= 0.08) & (v >= 0.08)
-    
-    # Organic Diseased, Blighted, Yellowing, Brown necrotic leaf tissue: Hue 10-65°, Saturation >= 0.10, Value >= 0.08
-    diseased_foliage = (h >= 10) & (h <= 65) & (s >= 0.10) & (v >= 0.08)
+    # HSV Botanical Color Space Analysis
+    hsv = img_rgb.resize((224, 224)).convert("HSV")
+    hsv_arr = np.asarray(hsv, dtype=np.float32)
+    h = hsv_arr[..., 0] / 255.0 * 360.0
+    s = hsv_arr[..., 1] / 255.0
+    v = hsv_arr[..., 2] / 255.0
 
-    foliage_ratio = float((green_foliage | diseased_foliage).sum()) / (224.0 * 224.0)
+    # 1. Photosynthetic Chlorophyll
+    exg = 2.0 * g - r - b
+    green_veg = (exg > 0.025) & (s >= 0.12) & (v >= 0.08) & (v <= 0.94) & (h >= 35) & (h <= 160)
 
-    # 2. Digital UI Screen checks (e.g. pure bright cyan/blue software windows with zero plant material)
-    rgb_arr = np.asarray(img_rgb.resize((224, 224))).astype("float32") / 255.0
-    r, g, b = rgb_arr[..., 0], rgb_arr[..., 1], rgb_arr[..., 2]
-    bright_blue_cyan = ((b > r * 1.3) & (b > g * 1.15) & (b > 0.35))
-    blue_ratio = float(bright_blue_cyan.sum()) / (224.0 * 224.0)
+    # 2. Organic Foliar Chlorosis
+    yellow_chlorosis = (h >= 28) & (h <= 65) & (s >= 0.18) & (v >= 0.20) & (r > b + 0.08)
 
-    # Only flag digital screens if high blue AND practically no plant foliage
-    if blue_ratio > 0.45 and foliage_ratio < 0.08:
-        return False, "Detected computer screen or digital UI."
-        
-    # Plant foliage check (at least 4% of image has plant/leaf pigments)
-    if foliage_ratio < 0.04:
-        return False, "Insufficient plant leaf tissue detected. Please upload a clear photo of a crop leaf."
+    # 3. Organic Necrotic Blight / Rust / Brown Lesions
+    brown_necrosis = (
+        (h >= 10) & (h <= 38) & (s >= 0.18) & (v >= 0.10) & (v <= 0.75) & (r > g) & (g > b * 1.10)
+    )
+
+    plant_mask = green_veg | yellow_chlorosis | brown_necrosis
+    foliage_ratio = float(plant_mask.sum()) / (224.0 * 224.0)
+
+    # 4. Specular Metallic / Vehicle Paint / Glass Reflections
+    # Cars & plastic exhibit intense specular gloss highlights surrounded by solid paint
+    specular_metallic = (v > 0.90) & (s < 0.15) & (r > 0.80) & (g > 0.80) & (b > 0.80)
+    specular_ratio = float(specular_metallic.sum()) / (224.0 * 224.0)
+
+    # 5. Non-organic Sky / Blue Surface
+    blue_cyan = (b > r * 1.25) & (b > g * 1.10) & (b > 0.25) & (h >= 180) & (h <= 265)
+    blue_ratio = float(blue_cyan.sum()) / (224.0 * 224.0)
+
+    # 6. Synthetic Violet / Magenta / Neon
+    synthetic_violet = (h >= 270) & (h <= 340) & (s >= 0.25)
+    synthetic_ratio = float(synthetic_violet.sum()) / (224.0 * 224.0)
+
+    # 7. Biological Micro-Texture & Gradient Complexity
+    # Plant leaf tissue contains natural cellular veins, stomata, and mesophyll micro-gradients.
+    # Synthetic flat painted surfaces (like cars, plastic, walls) have unnaturally flat, uniform patches.
+    grad_x = np.abs(arr_224[:, 1:, :] - arr_224[:, :-1, :])
+    grad_y = np.abs(arr_224[1:, :, :] - arr_224[:-1, :, :])
+    texture_complexity = float(np.mean(grad_x) + np.mean(grad_y))
+
+    # 8. Biological Chlorophyll Hue Variance
+    # Real leaves have biological hue gradients (veins, lighting, leaf edges).
+    # Synthetic car paint or plastic has unnaturally monolithic hue with zero biological variance.
+    if foliage_ratio > 0.15:
+        green_hues = h[green_veg]
+        hue_std = float(np.std(green_hues)) if len(green_hues) > 50 else 0.0
+    else:
+        hue_std = 0.0
+
+    # Rule A: Insufficient plant foliage
+    if foliage_ratio < 0.12:
+        reason = (
+            "Non-plant object detected. Insufficient crop leaf tissue."
+            if lang != "hi"
+            else "गाड़ी, वस्तु या गैर-पौधे की फोटो पहचानी गई। केवल फसल की पत्ती अपलोड करें।"
+        )
+        return False, reason
+
+    # Rule B: High Sky/Screen Blue or Synthetic Colors
+    if blue_ratio > 0.30 and foliage_ratio < 0.20:
+        reason = (
+            "Detected sky, digital screen, or blue non-plant surface."
+            if lang != "hi"
+            else "स्क्रीन, आसमान या नीली गैर-जैविक वस्तु पहचानी गई।"
+        )
+        return False, reason
+
+    if synthetic_ratio > 0.18:
+        reason = (
+            "Detected synthetic non-botanical colors."
+            if lang != "hi"
+            else "अप्राकृतिक कृत्रिम रंग पहचाना गया।"
+        )
+        return False, reason
+
+    # Rule C: Synthetic Green Object / Car Paint Rejection
+    # Flat texture + metallic specular highlights OR unnaturally monolithic synthetic paint hue
+    if (specular_ratio > 0.08 and texture_complexity < 0.038) or (hue_std < 3.2 and foliage_ratio > 0.40 and texture_complexity < 0.032):
+        reason = (
+            "Synthetic painted object or vehicle detected. Please upload a real botanical crop leaf."
+            if lang != "hi"
+            else "कृत्रिम रंग, गाड़ी या धातु की सतह पहचानी गई। कृपया असली फसल की पत्ती की फोटो अपलोड करें।"
+        )
+        return False, reason
 
     return True, ""
 
@@ -516,14 +906,13 @@ def classify_crop_leaf(image: Image.Image, selected_crop: str = "Tomato", lang: 
 
         raw_logits = session.run(["logits"], {"input": tensor})[0][0].copy()
 
-        # Botanical lesion morphology analysis (concentric necrotic brown spots with yellow halos)
+        # Botanical lesion morphology calibration
         r, g, b = arr[..., 0], arr[..., 1], arr[..., 2]
         brown_spots = (r > 0.28) & (g > 0.18) & (b < 0.26) & (r > b * 1.35)
         brown_ratio = float(brown_spots.sum()) / (224.0 * 224.0)
 
         calibrated_logits = raw_logits.copy()
         if brown_ratio > 0.12:
-            # Concentric necrotic target spots are characteristic for Alternaria Early Blight / Target Spot on Solanaceae
             for i, c in enumerate(classes):
                 if "Early_blight" in c:
                     calibrated_logits[i] += 3.4
@@ -532,40 +921,45 @@ def classify_crop_leaf(image: Image.Image, selected_crop: str = "Tomato", lang: 
                 elif c == "Grape___Black_rot" and selected_crop != "Grape":
                     calibrated_logits[i] -= 2.2
 
+        global_max_logit = float(np.max(calibrated_logits))
+        global_exp = np.exp((calibrated_logits - global_max_logit) / 0.65)
+        global_probs = global_exp / global_exp.sum()
+        global_top_idx = int(np.argmax(global_probs))
+        global_top_prob = float(global_probs[global_top_idx])
+        global_top_class = classes[global_top_idx]
+
         prefix = CROP_PREFIX_MAP.get(selected_crop)
         if prefix:
             matching_indices = [i for i, c in enumerate(classes) if c.startswith(prefix)]
             if matching_indices:
                 sub_logits = calibrated_logits[matching_indices]
                 max_sub_logit = float(np.max(sub_logits))
-                sub_exp = np.exp((sub_logits - max_sub_logit) / 0.65)
-                norm_sub_probs = sub_exp / sub_exp.sum()
-                sub_top_idx = int(np.argmax(norm_sub_probs))
-                top_idx = matching_indices[sub_top_idx]
-                confidence = float(norm_sub_probs[sub_top_idx])
+
+                if global_max_logit > 3.5 and not global_top_class.startswith(prefix) and global_top_prob > 0.75:
+                    top_idx = global_top_idx
+                    confidence = global_top_prob
+                else:
+                    sub_exp = np.exp((sub_logits - max_sub_logit) / 0.65)
+                    norm_sub_probs = sub_exp / sub_exp.sum()
+                    sub_top_idx = int(np.argmax(norm_sub_probs))
+                    top_idx = matching_indices[sub_top_idx]
+                    confidence = float(norm_sub_probs[sub_top_idx])
             else:
-                max_logit = float(np.max(calibrated_logits))
-                exp = np.exp((calibrated_logits - max_logit) / 0.65)
-                probs = exp / exp.sum()
-                top_idx = int(np.argmax(probs))
-                confidence = float(probs[top_idx])
+                top_idx = global_top_idx
+                confidence = global_top_prob
         else:
-            max_logit = float(np.max(calibrated_logits))
-            exp = np.exp((calibrated_logits - max_logit) / 0.65)
-            probs = exp / exp.sum()
-            top_idx = int(np.argmax(probs))
-            confidence = float(probs[top_idx])
+            top_idx = global_top_idx
+            confidence = global_top_prob
 
         top_raw_class = classes[top_idx]
 
-        if confidence < 0.15:
+        if confidence < 0.28 or global_max_logit < 0.6 or global_top_prob < 0.20:
             return None, 0.0, False
 
         info = get_disease_info(top_raw_class, lang=lang)
         return info, confidence, True
 
-    info = get_disease_info("Tomato___healthy", lang=lang)
-    return info, 0.85, True
+    return None, 0.0, False
 
 
 # ----------------------------------------------------------------------------
@@ -610,17 +1004,17 @@ def calculate_outbreak_risk(weather_json):
     precip = daily.get("precipitation_sum", [])
 
     if not humidity or not tmin:
-        return "Low", "Normal weather forecast."
+        return "Low", "Normal weather conditions."
 
     high_humidity_days = sum(1 for h in humidity if h is not None and h >= 85)
     wet_days = sum(1 for p in precip if p is not None and p > 1.0)
     avg_tmin = sum(t for t in tmin if t is not None) / max(1, len(tmin))
 
     if 10 <= avg_tmin <= 24 and high_humidity_days >= 3 and wet_days >= 3:
-        return "High", f"{high_humidity_days} humid days and {wet_days} wet days forecast with nighttime temps around {avg_tmin:.0f}°C (ideal for fungal blight spread)."
+        return "High", f"{high_humidity_days} humid days and {wet_days} wet days forecast with nighttime temps ~{avg_tmin:.0f}°C (ideal for fungal blight spread)."
     elif high_humidity_days >= 2 or wet_days >= 2:
         return "Medium", f"{high_humidity_days} humid days forecast in the coming week. Preventive monitoring recommended."
-    return "Low", "Favorable conditions with low likelihood of fungal disease transmission."
+    return "Low", "Favorable dry conditions with minimal likelihood of fungal disease transmission."
 
 
 def get_planting_advice(crop: str, risk: str):
@@ -693,89 +1087,109 @@ def assistant_reply(message: str, last_diag_info=None):
 # 3. UI LAYOUT & FLOW
 # ----------------------------------------------------------------------------
 
-lang = st.sidebar.selectbox("Language / भाषा", ["en", "hi"], format_func=lambda x: "English" if x == "en" else "हिन्दी")
+# Sidebar minimal settings (Clean language picker)
+lang = st.sidebar.selectbox("🌐 Interface Language / भाषा", ["en", "hi"], format_func=lambda x: "English (EN)" if x == "en" else "हिन्दी (HI)")
 T = TEXT[lang]
 
-# 1. Navbar
+# 1. Glass Floating Mobile App Header Bar
 st.markdown(
-    f"""<div class="km-navbar">
-<div class="km-navbar-logo">🌿</div>
-<div class="km-navbar-title">{T['app_name']}</div>
-<div class="km-navbar-badge">{T['app_tagline']}</div>
+    f"""<div class="km-glass-app-bar">
+  <div class="km-brand-wrap">
+    <div class="km-glass-logo">🌿</div>
+    <div>
+      <div class="km-brand-name">{T['app_name']}</div>
+      <div class="km-brand-sub">{T['app_tagline']}</div>
+    </div>
+  </div>
+  <div class="km-glass-status">
+    <div class="km-status-beacon"></div>
+    <span>{T['system_ready']}</span>
+  </div>
 </div>""",
     unsafe_allow_html=True
 )
 
-# 2. Hero Section
-st.markdown(
-    f"""<div class="km-hero-card">
-<div class="km-hero-title">{T['hero_title']}</div>
-<div class="km-hero-sub">{T['hero_sub']}</div>
-<a href="#disease-detection-interface" class="km-try-btn">{T['try_now']}</a>
-</div>""",
-    unsafe_allow_html=True
-)
-
-# ----------------------------------------------------------------------------
-# 3. TOP LEVEL NAVIGATION TABS
-# ----------------------------------------------------------------------------
-main_app_tabs = st.tabs([
-    "🌱 AI Crop Doctor & Diagnosis",
-    "🏛️ SIH Pillars & Regional Surveillance"
+# 2. Unified Top-Level Glass Navigation Tabs
+app_tabs = st.tabs([
+    "🌱 AI Doctor",
+    "🗺️ Outbreak Map",
+    "📊 Surveillance",
+    "✅ KVK Network",
+    "🧪 Safety & PHI"
 ])
 
-with main_app_tabs[0]:
-    # 3. How it Works (4-Step Responsive Grid)
-    st.markdown(f'<div class="km-how-title">{T["how_title"]}</div>', unsafe_allow_html=True)
+# ─────────────────────────────────────────────────────────────────────────────
+# TAB 1: AI CROP DOCTOR & DIAGNOSIS
+# ─────────────────────────────────────────────────────────────────────────────
+with app_tabs[0]:
+    # Frosted Glass Hero Card
     st.markdown(
-        f"""<div class="km-how-grid">
-    <div class="km-how-item">
-    <div class="km-how-icon-circle">📷</div>
-    <div class="km-how-label">{T['how1_title']}</div>
-    <div class="km-how-desc">{T['how1_desc']}</div>
+        f"""<div class="km-glass-hero">
+  <div class="km-hero-badge">⚡ {T['hero_badge']}</div>
+  <div class="km-hero-title">{T['hero_title']}</div>
+  <div class="km-hero-sub">{T['hero_sub']}</div>
+  <div class="km-pipeline">
+    <div class="km-pipe-node">
+      <div class="km-pipe-icon">📷</div>
+      <div class="km-pipe-title">{T['how1_title']}</div>
+      <div class="km-pipe-sub">{T['how1_desc']}</div>
     </div>
-    <div class="km-how-item">
-    <div class="km-how-icon-circle">🤖</div>
-    <div class="km-how-label">{T['how2_title']}</div>
-    <div class="km-how-desc">{T['how2_desc']}</div>
+    <div class="km-pipe-node">
+      <div class="km-pipe-icon">🤖</div>
+      <div class="km-pipe-title">{T['how2_title']}</div>
+      <div class="km-pipe-sub">{T['how2_desc']}</div>
     </div>
-    <div class="km-how-item">
-    <div class="km-how-icon-circle">🔬</div>
-    <div class="km-how-label">{T['how3_title']}</div>
-    <div class="km-how-desc">{T['how3_desc']}</div>
+    <div class="km-pipe-node">
+      <div class="km-pipe-icon">🔬</div>
+      <div class="km-pipe-title">{T['how3_title']}</div>
+      <div class="km-pipe-sub">{T['how3_desc']}</div>
     </div>
-    <div class="km-how-item">
-    <div class="km-how-icon-circle">💬</div>
-    <div class="km-how-label">{T['how4_title']}</div>
-    <div class="km-how-desc">{T['how4_desc']}</div>
+    <div class="km-pipe-node">
+      <div class="km-pipe-icon">💊</div>
+      <div class="km-pipe-title">{T['how4_title']}</div>
+      <div class="km-pipe-sub">{T['how4_desc']}</div>
     </div>
-    </div>""",
+  </div>
+</div>""",
         unsafe_allow_html=True
     )
 
-    # 4. Disease Detection Interface (Upload Leaf Image Card)
-    st.markdown('<div id="disease-detection-interface"></div>', unsafe_allow_html=True)
+    # Leaf Scanner Glass Card with Live Camera & Gallery Upload Tabs
     st.markdown(
-        f"""<div class="km-section-card">
-    <div class="km-card-header">
-    <div class="km-card-title">{T['upload_title']}</div>
-    <div class="km-card-subtitle">{T['upload_sub']}</div>
-    </div>""",
+        f"""<div class="km-glass-card">
+  <div class="km-card-head">
+    <div>
+      <div class="km-card-title">📷 {T['upload_title']}</div>
+      <div class="km-card-sub">{T['upload_sub']}</div>
+    </div>
+  </div>""",
         unsafe_allow_html=True
     )
 
-    uploaded_file = st.file_uploader(
-        "Upload leaf image",
-        type=["jpg", "jpeg", "png", "webp"],
-        label_visibility="collapsed"
-    )
+    # Sub-tabs inside Scanner: Phone Camera vs Upload
+    cam_tab, upload_tab = st.tabs([T["camera_tab"], T["upload_tab"]])
+    
+    input_file = None
+    with cam_tab:
+        cam_file = st.camera_input("Snap a live photo of crop leaf", label_visibility="collapsed")
+        if cam_file is not None:
+            input_file = cam_file
+
+    with upload_tab:
+        uploaded_file = st.file_uploader(
+            "Upload leaf image from gallery",
+            type=["jpg", "jpeg", "png", "webp"],
+            label_visibility="collapsed"
+        )
+        if uploaded_file is not None and input_file is None:
+            input_file = uploaded_file
 
     col_loc, col_crp = st.columns(2)
     with col_loc:
-        location_input = st.text_input("Location / स्थान", value="Dehradun", placeholder="e.g. Dehradun, Haridwar, Lucknow, Shimla...")
+        location_input = st.text_input("📍 Location / स्थान", value="Dehradun", placeholder="e.g. Dehradun, Haridwar, Lucknow, Shimla...")
     with col_crp:
         crop_select = st.selectbox(
-            "Crop / फसल",
+            "🌾 Crop / फसल",
             [
                 "Auto-Detect (Any Crop)",
                 "Tomato",
@@ -800,38 +1214,37 @@ with main_app_tabs[0]:
     detect_clicked = st.button(f"🔍 {T['detect_btn']}", use_container_width=True)
     st.markdown('</div>', unsafe_allow_html=True)
 
-    # 5. Process Image on Upload
-    if uploaded_file is not None:
-        image = Image.open(uploaded_file)
-        valid_plant, reject_reason = is_valid_crop_leaf(image)
+    # Diagnostic Flow
+    if input_file is not None:
+        image = Image.open(input_file)
+        valid_plant, reject_reason = is_valid_crop_leaf(image, lang=lang)
 
         if not valid_plant:
-            # Branch 2b: Incorrect Image Type Uploaded (Error State)
             st.markdown(
-                f"""<div class="km-section-card">
-    <div class="km-error-box">
-    <div class="km-error-badge">{T['invalid_photo_badge']}</div>
-    <div class="km-error-msg">{T['invalid_photo_title']}</div>
-    <div class="km-error-sub">{T['invalid_photo_msg']} ({reject_reason})<br/>{T['invalid_photo_sub']}</div>
-    </div>
-    </div>""",
+                f"""<div class="km-glass-error">
+  <div class="km-error-badge">{T['invalid_photo_badge']}</div>
+  <div style="font-weight:800; font-size:1.05rem; color:#FFFFFF; margin-bottom:0.35rem;">{T['invalid_photo_title']}</div>
+  <div style="font-size:0.86rem; color:#FDA4AF; line-height:1.5;">
+    {T['invalid_photo_msg']} ({reject_reason})<br/>
+    {T['invalid_photo_sub']}
+  </div>
+</div>""",
                 unsafe_allow_html=True
             )
             st.image(image, caption="Uploaded Image", use_container_width=True)
         else:
-            with st.spinner("AI is analyzing leaf tissue..."):
+            with st.spinner("AI Vision is analyzing leaf pathology..."):
                 diag_info, confidence, is_confident = classify_crop_leaf(image, selected_crop=crop_select, lang=lang)
 
             if not is_confident or diag_info is None:
-                # Low confidence / Non-crop fallback
                 st.markdown(
-                    f"""<div class="km-section-card">
-    <div class="km-error-box">
-    <div class="km-error-badge">{T['invalid_photo_badge']}</div>
-    <div class="km-error-msg">{T['invalid_photo_title']}</div>
-    <div class="km-error-sub">{T['invalid_photo_msg']}<br/>{T['invalid_photo_sub']}</div>
-    </div>
-    </div>""",
+                    f"""<div class="km-glass-error">
+  <div class="km-error-badge">{T['invalid_photo_badge']}</div>
+  <div style="font-weight:800; font-size:1.05rem; color:#FFFFFF; margin-bottom:0.35rem;">{T['invalid_photo_title']}</div>
+  <div style="font-size:0.86rem; color:#FDA4AF; line-height:1.5;">
+    {T['invalid_photo_msg']}<br/>{T['invalid_photo_sub']}
+  </div>
+</div>""",
                     unsafe_allow_html=True
                 )
                 st.image(image, caption="Uploaded Image", use_container_width=True)
@@ -857,41 +1270,60 @@ with main_app_tabs[0]:
                 except Exception:
                     pass
 
-                # 5. Analysis Results Screen (Responsive Split Layout)
+                # Diagnostic Report Presentation
+                is_healthy_plant = "healthy" in diag_info.get("label", "").lower()
+                status_class = "healthy" if is_healthy_plant else "danger"
+                status_badge = "✅ Healthy Tissue" if is_healthy_plant else "⚠️ Active Pathology Detected"
+
                 st.markdown(
-                    f"""<div class="km-section-card">
-    <div class="km-card-header">
-    <div class="km-card-title">{T['results_title']}</div>
-    </div>""",
+                    f"""<div class="km-glass-card">
+  <div class="km-card-head">
+    <div>
+      <div class="km-card-title">🔬 {T['results_title']}</div>
+      <div class="km-card-sub">AI ResNet-50 Diagnostic Scan</div>
+    </div>
+    <span style="font-size:0.75rem; font-weight:700; color:{'#34D399' if is_healthy_plant else '#FB7185'}; background:{'rgba(16,185,129,0.14)' if is_healthy_plant else 'rgba(244,63,94,0.14)'}; border:1px solid {'rgba(16,185,129,0.35)' if is_healthy_plant else 'rgba(244,63,94,0.35)'}; padding:0.28rem 0.8rem; border-radius:999px;">
+      {status_badge}
+    </span>
+  </div>""",
                     unsafe_allow_html=True
                 )
 
-                col_img, col_res = st.columns([1, 1.25])
-                with col_img:
-                    st.image(image, caption="Analyzed Crop Leaf", use_container_width=True)
-                with col_res:
-                    st.markdown(
-                        f"""<div class="km-result-stack">
-    <div class="km-result-row km-row-disease">
-    <div class="km-result-row-title">🏷️ {T['disease_identified']}</div>
-    <div class="km-result-row-value">{diag_info['label']}</div>
-    <div class="km-result-row-sub">Pathogen: {diag_info['type']}</div>
+                st.image(image, caption="Analyzed Leaf Sample", use_container_width=True)
+                
+                conf_pct = confidence * 100
+                st.markdown(
+                    f"""<div class="km-diag-grid">
+  <div class="km-glass-pill {status_class}">
+    <div class="km-diag-header-tag">🏷️ {T['disease_identified']}</div>
+    <div class="km-diag-name">{diag_info['label']}</div>
+    <div class="km-diag-desc">Pathogen Group: <b>{diag_info['type']}</b></div>
+  </div>
+
+  <div class="km-glass-pill">
+    <div class="km-diag-header-tag" style="color:#38BDF8;">📊 {T['confidence_level']}</div>
+    <div style="display:flex; justify-content:space-between; font-weight:800; font-size:1.05rem; color:#FFFFFF;">
+      <span>AI Certainty</span>
+      <span style="color:#34D399;">{conf_pct:.1f}%</span>
     </div>
-    <div class="km-result-row-confidence">
-    <div class="km-result-row-title">📊 {T['confidence_level']}</div>
-    <div class="km-result-row-value">{confidence * 100:.2f}%</div>
+    <div class="km-conf-container">
+      <div class="km-conf-bar-bg">
+        <div class="km-conf-bar-fill" style="width:{conf_pct:.1f}%;"></div>
+      </div>
     </div>
-    <div class="km-result-row-advice">
-    <div class="km-result-row-title">💡 {T['expert_advice']}</div>
-    <div class="km-result-row-sub"><b>Treatment:</b> {diag_info['guidance']}</div>
-    <div class="km-result-row-sub" style="margin-top:0.4rem;"><b>Prevention:</b> {diag_info['prevention']}</div>
-    </div>
-    </div>""",
-                        unsafe_allow_html=True
-                    )
+  </div>
+
+  <div class="km-glass-pill">
+    <div class="km-diag-header-tag" style="color:#FBBF24;">💡 {T['expert_advice']}</div>
+    <div class="km-diag-desc"><b>Treatment:</b> {diag_info['guidance']}</div>
+    <div class="km-diag-desc" style="margin-top:0.4rem;"><b>Prevention:</b> {diag_info['prevention']}</div>
+  </div>
+</div>""",
+                    unsafe_allow_html=True
+                )
                 st.markdown('</div>', unsafe_allow_html=True)
 
-                # Weather & Outbreak Risk Card (Subtle dark matte styling)
+                # Weather & Outbreak Risk Card
                 geo = None
                 weather = None
                 if location_input:
@@ -906,41 +1338,55 @@ with main_app_tabs[0]:
                     current = weather.get("current", {})
                     risk, risk_why = calculate_outbreak_risk(weather)
                     plant_adv = get_planting_advice(crop_select, risk)
+                    risk_color = "#FB7185" if risk == "High" else "#FBBF24" if risk == "Medium" else "#34D399"
 
                     st.markdown(
-                        f"""<div class="km-section-card">
-    <div class="km-card-title" style="font-size:clamp(1.05rem, 3vw, 1.2rem); margin-bottom:0.8rem;">🌦️ {T['weather_title']} ({geo['label'] if geo else location_input})</div>
-    <div style="display:flex; gap:0.5rem; flex-wrap:wrap; margin-bottom:0.8rem;">
-    <span class="km-weather-pill">🌡 {current.get('temperature_2m', '—')}°C</span>
-    <span class="km-weather-pill">💧 {current.get('relative_humidity_2m', '—')}% Humidity</span>
-    <span class="km-weather-pill">🌬 {current.get('wind_speed_10m', '—')} km/h Wind</span>
+                        f"""<div class="km-glass-card">
+  <div class="km-card-head">
+    <div>
+      <div class="km-card-title">🌦️ {T['weather_title']}</div>
+      <div class="km-card-sub">{geo['label'] if geo else location_input}</div>
     </div>
-    <div style="background:rgba(8, 22, 17, 0.65); border:1px solid rgba(149, 213, 178, 0.12); border-radius:12px; padding:0.85rem 1rem; margin-bottom:0.8rem;">
-    <b>Outbreak Risk:</b> <span style="font-weight:800; color:{'#FF4D6D' if risk=='High' else '#F7CA75' if risk=='Medium' else '#5CE0D0'};">{risk}</span><br/>
-    <span style="font-size:0.84rem; color:var(--km-text-sub);">{risk_why}</span>
-    </div>
-    <div style="background:rgba(8, 22, 17, 0.65); border:1px solid rgba(149, 213, 178, 0.12); border-radius:12px; padding:0.85rem 1rem;">
+    <span style="font-size:0.75rem; font-weight:700; color:{risk_color}; background:rgba(255,255,255,0.05); border:1px solid {risk_color}44; padding:0.28rem 0.8rem; border-radius:999px;">
+      Risk: {risk}
+    </span>
+  </div>
+
+  <div class="km-weather-ribbon">
+    <span class="km-w-chip">🌡️ {current.get('temperature_2m', '—')}°C</span>
+    <span class="km-w-chip">💧 {current.get('relative_humidity_2m', '—')}% Humidity</span>
+    <span class="km-w-chip">🌬️ {current.get('wind_speed_10m', '—')} km/h</span>
+  </div>
+
+  <div style="background:rgba(20,32,40,0.55); border:1px solid var(--glass-border); border-radius:14px; padding:0.85rem 1rem; margin-bottom:0.75rem; font-size:0.86rem; line-height:1.48;">
+    <b>Outbreak Assessment:</b> <span style="color:{risk_color}; font-weight:700;">{risk}</span><br/>
+    <span style="color:var(--km-text-sub);">{risk_why}</span>
+  </div>
+
+  <div style="background:rgba(20,32,40,0.55); border:1px solid var(--glass-border); border-radius:14px; padding:0.85rem 1rem; font-size:0.86rem; line-height:1.48;">
     <b>🌾 {T['planting_title']}:</b><br/>
-    <span style="font-size:0.84rem; color:var(--km-text-sub);">{plant_adv}</span>
-    </div>
-    </div>""",
+    <span style="color:var(--km-text-sub);">{plant_adv}</span>
+  </div>
+</div>""",
                         unsafe_allow_html=True
                     )
 
-                    # Audio Readout
+                    # Voice Prescription Audio Readout
                     audio_text = f"{diag_info['label']}. {diag_info['guidance']}. Outbreak risk is {risk}. {plant_adv}"
                     audio_data = generate_audio(audio_text, lang=lang)
                     if audio_data:
-                        st.markdown(f"<b>{T['listen_btn']}</b>", unsafe_allow_html=True)
+                        st.markdown(f"<div style='font-size:0.88rem; font-weight:700; color:#34D399; margin-bottom:0.35rem;'>{T['listen_btn']}</div>", unsafe_allow_html=True)
                         st.audio(audio_data, format="audio/mp3")
 
-    # 6. AI Chat Assistant (Docked clean panel matching flowchart)
+    # Interactive AI Chat Assistant Panel
     st.markdown(
-        f"""<div class="km-chat-box">
-    <div class="km-chat-header">
-    🌿 {T['chat_title']}
+        f"""<div class="km-chat-container">
+  <div class="km-card-head" style="margin-bottom:0.85rem;">
+    <div>
+      <div class="km-card-title">💬 {T['chat_title']}</div>
+      <div class="km-card-sub">Ask clinical agricultural questions about plant symptoms & sprays</div>
     </div>
-    </div>""",
+  </div>""",
         unsafe_allow_html=True
     )
 
@@ -959,5 +1405,32 @@ with main_app_tabs[0]:
         st.session_state["chat_history"].append(("assistant", bot_reply))
         st.rerun()
 
-with main_app_tabs[1]:
-    sih_pillars_addon.render_sih_pillars_tab()
+    st.markdown('</div>', unsafe_allow_html=True)
+
+# ─────────────────────────────────────────────────────────────────────────────
+# TAB 2: GEOSPATIAL OUTBREAK HOTSPOT MAP
+# ─────────────────────────────────────────────────────────────────────────────
+with app_tabs[1]:
+    sih_pillars_addon._inject_styles()
+    sih_pillars_addon.render_geospatial_hotspots()
+
+# ─────────────────────────────────────────────────────────────────────────────
+# TAB 3: SURVEILLANCE & OFFICIALS' ANALYTICS DASHBOARD
+# ─────────────────────────────────────────────────────────────────────────────
+with app_tabs[2]:
+    sih_pillars_addon._inject_styles()
+    sih_pillars_addon.render_officials_dashboard()
+
+# ─────────────────────────────────────────────────────────────────────────────
+# TAB 4: EXPERT VALIDATION & KVK / LABORATORY REFERRALS
+# ─────────────────────────────────────────────────────────────────────────────
+with app_tabs[3]:
+    sih_pillars_addon._inject_styles()
+    sih_pillars_addon.render_expert_validation_and_referral()
+
+# ─────────────────────────────────────────────────────────────────────────────
+# TAB 5: CHEMICAL SAFETY DOSAGE & PHI RECOVERY TRACKER
+# ─────────────────────────────────────────────────────────────────────────────
+with app_tabs[4]:
+    sih_pillars_addon._inject_styles()
+    sih_pillars_addon.render_safety_and_followup()
