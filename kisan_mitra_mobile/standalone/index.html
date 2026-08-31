@@ -3,13 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <title>Kisan Mitra — Standalone Offline AI Crop Doctor</title>
+  <title>Kisan Mitra — Precision Crop Doctor Mobile App</title>
   
   <link rel="manifest" href="./manifest.json" />
   <meta name="theme-color" content="#081611" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 
+  <!-- Google Fonts & Material Icons -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
@@ -23,49 +24,59 @@
 
   <div class="app-container">
     
-    <!-- Top App Bar -->
+    <!-- ══════════════════ Top App Bar ══════════════════ -->
     <header class="top-app-bar">
       <div class="brand-section">
         <div class="brand-logo-badge">🌿</div>
         <div class="brand-text">
           <h1 data-i18n="appTitle">Kisan Mitra</h1>
-          <span data-i18n="appSub">Offline AI Crop Doctor</span>
+          <span data-i18n="appSub">AI Precision Crop Doctor</span>
         </div>
       </div>
       <div class="app-bar-actions">
         <button id="langToggleBtn" class="lang-toggle-btn">🌐 हिन्दी</button>
         <div class="status-pill">
           <div class="pulse-dot"></div>
-          <span id="engineStatusText">100% Offline AI</span>
+          <span id="engineStatusText">AI Ready (100% Offline)</span>
         </div>
       </div>
     </header>
 
-    <!-- Main Scan Tab -->
-    <main id="tab-scan" class="tab-content active">
+    <!-- ══════════════════ TAB 1: AI Crop Doctor (Scanner) ══════════════════ -->
+    <main id="tab-doctor" class="tab-content active">
       
-      <!-- Offline Badge Banner -->
-      <div class="offline-banner">
-        <span class="badge">ON-DEVICE AI</span>
-        <div style="font-size: 0.78rem; color: var(--km-on-surface);">
-          No internet required. 38-class neural vision model runs directly on your phone's processor.
+      <!-- Welcome Hero Banner -->
+      <section class="welcome-hero">
+        <div class="welcome-title" data-i18n="welcomeTitle">Precision Crop Doctor</div>
+        <div class="welcome-sub" data-i18n="welcomeSub">
+          38-Class Deep Learning Vision • Hyperlocal Weather Radar • Vernacular Voice Guidance
         </div>
-      </div>
+        <div style="display: flex; gap: 0.5rem;">
+          <span class="severity-pill sev-low">✓ 100% On-Device AI</span>
+          <span class="severity-pill" style="background: rgba(13,122,112,0.3); color: var(--km-primary);">⚡ Latency &lt; 50ms</span>
+        </div>
+      </section>
 
-      <!-- Crop Selector -->
+      <!-- 14 Crop Varieties Selector -->
       <div style="margin-bottom: 0.85rem;">
         <div style="font-size: 0.78rem; font-weight: 700; color: var(--km-on-surface-variant); text-transform: uppercase; margin-bottom: 0.4rem;">
-          Select Crop Variety
+          Select Crop Variety (फसल चुनें)
         </div>
         <div class="crop-carousel">
           <div class="crop-chip active" data-crop="Auto-Detect">🔍 Auto-Detect</div>
-          <div class="crop-chip" data-crop="Tomato">🍅 Tomato</div>
-          <div class="crop-chip" data-crop="Potato">🥔 Potato</div>
-          <div class="crop-chip" data-crop="Corn (Maize)">🌽 Corn (Maize)</div>
-          <div class="crop-chip" data-crop="Chili / Capsicum">🌶️ Chili</div>
-          <div class="crop-chip" data-crop="Grape">🍇 Grape</div>
-          <div class="crop-chip" data-crop="Apple">🍎 Apple</div>
-          <div class="crop-chip" data-crop="Soybean">🌱 Soybean</div>
+          <div class="crop-chip" data-crop="Tomato">🍅 Tomato (टमाटर)</div>
+          <div class="crop-chip" data-crop="Potato">🥔 Potato (आलू)</div>
+          <div class="crop-chip" data-crop="Corn (Maize)">🌽 Corn (मक्का)</div>
+          <div class="crop-chip" data-crop="Chili / Capsicum">🌶️ Chili (मिर्च)</div>
+          <div class="crop-chip" data-crop="Grape">🍇 Grape (अंगूर)</div>
+          <div class="crop-chip" data-crop="Apple">🍎 Apple (सेब)</div>
+          <div class="crop-chip" data-crop="Soybean">🌱 Soybean (सोयाबीन)</div>
+          <div class="crop-chip" data-crop="Strawberry">🍓 Strawberry</div>
+          <div class="crop-chip" data-crop="Orange / Citrus">🍊 Orange</div>
+          <div class="crop-chip" data-crop="Peach">🍑 Peach</div>
+          <div class="crop-chip" data-crop="Squash / Cucurbits">🥒 Squash</div>
+          <div class="crop-chip" data-crop="Cherry">🍒 Cherry</div>
+          <div class="crop-chip" data-crop="Blueberry">🫐 Blueberry</div>
         </div>
       </div>
 
@@ -82,15 +93,15 @@
         <div id="scannerPlaceholder" class="scanner-placeholder-content">
           <span class="material-symbols-outlined icon">photo_camera</span>
           <p data-i18n="scanPlaceholder">Align single crop leaf inside viewfinder</p>
-          <span style="font-size: 0.72rem; color: var(--km-on-surface-variant);">Supported: 38 Crop & Disease Classes</span>
+          <span style="font-size: 0.72rem; color: var(--km-on-surface-variant);">Supported: 38 Crop & Disease Pathology Classes</span>
         </div>
       </div>
 
-      <!-- Native Inputs -->
+      <!-- Hidden Native File Inputs -->
       <input type="file" id="cameraInput" accept="image/*" capture="environment" style="display: none;" />
       <input type="file" id="galleryInput" accept="image/*" style="display: none;" />
 
-      <!-- Controls -->
+      <!-- Scanner Controls -->
       <div class="scanner-controls">
         <button id="cameraBtn" class="camera-btn">
           <span class="material-symbols-outlined">photo_camera</span>
@@ -102,41 +113,221 @@
         </button>
       </div>
 
-      <!-- Results Card -->
+      <!-- Diagnosis Result Card -->
       <div id="resultCard" class="result-card" style="margin-top: 1rem;"></div>
 
     </main>
 
-    <!-- Tab 2: Offline Advisory Knowledgebase -->
-    <main id="tab-info" class="tab-content">
-      <div class="glass-card">
+    <!-- ══════════════════ TAB 2: Weather & Outbreak Radar ══════════════════ -->
+    <main id="tab-radar" class="tab-content">
+      
+      <!-- District Selector -->
+      <div style="margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center;">
+        <div style="font-size: 0.85rem; font-weight: 700; color: var(--km-on-surface);">District Outbreak Radar:</div>
+        <select id="districtSelect" style="background: var(--km-surface-elevated); color: var(--km-primary); border: 1px solid var(--km-glass-border); padding: 0.35rem 0.75rem; border-radius: var(--km-radius-sm); font-size: 0.82rem; font-weight: 700; outline: none;">
+          <option value="Nashik">Nashik, Maharashtra</option>
+          <option value="Agra">Agra, Uttar Pradesh</option>
+          <option value="Ludhiana">Ludhiana, Punjab</option>
+          <option value="Indore">Indore, Madhya Pradesh</option>
+          <option value="Shimla">Shimla, Himachal Pradesh</option>
+        </select>
+      </div>
+
+      <!-- Weather Hero Card -->
+      <section class="weather-hero">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+          <div>
+            <div style="font-size: 0.78rem; color: var(--km-on-surface-variant); display: flex; align-items: center; gap: 0.3rem;">
+              <span class="material-symbols-outlined" style="font-size: 0.95rem;">location_on</span>
+              <span id="radarLocationName">Regional Agro Zone</span>
+            </div>
+            <div class="temp-large" id="radarTemp">28°C</div>
+          </div>
+          <div style="text-align: right;">
+            <div style="font-size: 0.72rem; color: var(--km-on-surface-variant); text-transform: uppercase; font-weight: 700;">Sporulation Risk</div>
+            <div style="font-size: 1.5rem; font-weight: 700; color: var(--km-tertiary);" id="radarRiskScore">45%</div>
+          </div>
+        </div>
+
+        <div class="weather-stats-grid">
+          <div class="stat-item">
+            <div class="stat-label">Humidity (RH)</div>
+            <div class="stat-val" id="radarHumidity">68%</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-label">Wind Speed</div>
+            <div class="stat-val" id="radarWind">8 km/h</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-label">Spray Window</div>
+            <div class="stat-val" style="color: var(--km-primary);">Optimal</div>
+          </div>
+        </div>
+
+        <div id="radarRiskBar" style="margin-top: 0.75rem; padding: 0.65rem 0.85rem; border-radius: var(--km-radius-sm); font-size: 0.8rem; font-weight: 600; display: flex; align-items: center; gap: 0.5rem;">
+          <span class="material-symbols-outlined">radar</span>
+          <span>Moderate fungal sporulation risk (45%).</span>
+        </div>
+      </section>
+
+      <!-- Geospatial Hotspots -->
+      <section>
         <div class="card-title" style="margin-bottom: 0.75rem;">
-          <span class="material-symbols-outlined icon">menu_book</span>
-          <span>Offline Agronomic Guide</span>
+          <span class="material-symbols-outlined icon">notifications_active</span>
+          <span>Nearby Outbreak Alerts</span>
         </div>
-        <p style="font-size: 0.82rem; color: var(--km-on-surface-variant); line-height: 1.5; margin-bottom: 0.75rem;">
-          This mobile app contains built-in treatment guidelines, organic formulations, and fungicide dosage calculators for:
-        </p>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; font-size: 0.78rem;">
-          <div style="background: rgba(8,22,17,0.5); padding: 0.5rem; border-radius: 8px;">🍅 Tomato (10 Diseases)</div>
-          <div style="background: rgba(8,22,17,0.5); padding: 0.5rem; border-radius: 8px;">🥔 Potato (3 Diseases)</div>
-          <div style="background: rgba(8,22,17,0.5); padding: 0.5rem; border-radius: 8px;">🌽 Corn (4 Diseases)</div>
-          <div style="background: rgba(8,22,17,0.5); padding: 0.5rem; border-radius: 8px;">🍇 Grape (4 Diseases)</div>
-          <div style="background: rgba(8,22,17,0.5); padding: 0.5rem; border-radius: 8px;">🍎 Apple (4 Diseases)</div>
-          <div style="background: rgba(8,22,17,0.5); padding: 0.5rem; border-radius: 8px;">🌶️ Chili & Capsicum</div>
+        <div id="hotspotsContainer"></div>
+      </section>
+
+    </main>
+
+    <!-- ══════════════════ TAB 3: AI Voice & Chat Assistant ══════════════════ -->
+    <main id="tab-assistant" class="tab-content">
+      <div class="chat-container">
+        
+        <!-- Quick Prompt Pills -->
+        <div style="display: flex; gap: 0.4rem; overflow-x: auto; padding-bottom: 0.5rem; scrollbar-width: none;">
+          <div class="crop-chip chat-chip">🍅 Tomato leaf curl remedy</div>
+          <div class="crop-chip chat-chip">🥔 Late blight spray dose</div>
+          <div class="crop-chip chat-chip">💰 Mandi prices today</div>
+          <div class="crop-chip chat-chip">🌱 NPK fertilizer schedule</div>
         </div>
+
+        <div class="chat-stream" id="chatStream">
+          <div class="chat-bubble bot">
+            <b>Namaste Kisan Bhai! 🙏</b><br/>
+            I am your AI Precision Crop Doctor Assistant. Ask me about disease remedies, chemical dosages, spray calculations, or government schemes in <b>English or हिन्दी</b>. Tap the mic to talk!
+          </div>
+        </div>
+
+        <!-- Chat Input Bar -->
+        <div class="chat-input-bar">
+          <button id="chatMicBtn" class="chat-mic-btn" title="Speak Query">
+            <span class="material-symbols-outlined" style="font-size: 1.3rem;">mic</span>
+          </button>
+          <input type="text" id="chatInput" class="chat-input" placeholder="Ask crop disease, spray dosage, fertilizer or schemes..." />
+          <button id="chatSendBtn" class="chat-send-btn">
+            <span class="material-symbols-outlined" style="font-size: 1.25rem;">send</span>
+          </button>
+        </div>
+
       </div>
     </main>
 
-    <!-- Bottom Navigation -->
+    <!-- ══════════════════ TAB 4: Mandi & Govt Schemes ══════════════════ -->
+    <main id="tab-mandi" class="tab-content">
+      
+      <section style="margin-bottom: 1.5rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+          <div class="card-title">
+            <span class="material-symbols-outlined icon">store</span>
+            <span>Live APMC Mandi Intelligence</span>
+          </div>
+          <span style="font-size: 0.7rem; color: var(--km-primary); font-weight: 700;">● Active Rates</span>
+        </div>
+        <div id="mandiContainer"></div>
+      </section>
+
+      <section>
+        <div class="card-title" style="margin-bottom: 0.75rem;">
+          <span class="material-symbols-outlined icon">account_balance</span>
+          <span>Government Agricultural Schemes & Subsidies</span>
+        </div>
+        <div id="schemesContainer"></div>
+      </section>
+
+    </main>
+
+    <!-- ══════════════════ TAB 5: Safety Guardrails & KVK ══════════════════ -->
+    <main id="tab-safety" class="tab-content">
+      
+      <!-- 14-Day Foliar Recovery Tracker -->
+      <section class="glass-card">
+        <div class="card-title" style="margin-bottom: 0.75rem;">
+          <span class="material-symbols-outlined icon">check_circle</span>
+          <span>14-Day Follow-Up Recovery Tracker</span>
+        </div>
+        <p style="font-size: 0.78rem; color: var(--km-on-surface-variant); margin-bottom: 0.75rem;">
+          Track treatment efficacy on your crop after applying foliar spray:
+        </p>
+
+        <label class="tracker-item">
+          <input type="checkbox" id="chkDay1" />
+          <div style="font-size: 0.8rem;"><b>Day 1:</b> Foliar spray applied with spreader in morning hours.</div>
+        </label>
+        <label class="tracker-item">
+          <input type="checkbox" id="chkDay3" />
+          <div style="font-size: 0.8rem;"><b>Day 3:</b> Inspect lesions — check if brown fungal spread has halted.</div>
+        </label>
+        <label class="tracker-item">
+          <input type="checkbox" id="chkDay7" />
+          <div style="font-size: 0.8rem;"><b>Day 7:</b> PHI Harvest Safety Interval cleared. Safe to harvest.</div>
+        </label>
+        <label class="tracker-item">
+          <input type="checkbox" id="chkDay14" />
+          <div style="font-size: 0.8rem;"><b>Day 14:</b> New healthy green foliar flush observed. Full recovery.</div>
+        </label>
+      </section>
+
+      <!-- Chemical Safety Triangle -->
+      <section class="glass-card">
+        <div class="card-title" style="margin-bottom: 0.5rem;">
+          <span class="material-symbols-outlined icon">shield</span>
+          <span>Chemical Safety & WHO Toxicity Guardrails</span>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; font-size: 0.76rem;">
+          <div style="background: rgba(147,0,10,0.25); color: #ffb4ab; padding: 0.5rem; border-radius: 8px; border: 1px solid rgba(147,0,10,0.4);">
+            🔴 <b>Class I (Red)</b>: Extremely Toxic. PPE mandatory.
+          </div>
+          <div style="background: rgba(247,189,78,0.2); color: #f7bd4e; padding: 0.5rem; border-radius: 8px; border: 1px solid rgba(247,189,78,0.4);">
+            🟡 <b>Class II (Yellow)</b>: Highly Toxic. Follow 7-10d PHI.
+          </div>
+          <div style="background: rgba(13,122,112,0.25); color: #7dd6ca; padding: 0.5rem; border-radius: 8px; border: 1px solid rgba(13,122,112,0.4);">
+            🔵 <b>Class III (Blue)</b>: Moderate. Wash hands after spray.
+          </div>
+          <div style="background: rgba(13,122,112,0.25); color: #acfff3; padding: 0.5rem; border-radius: 8px; border: 1px solid rgba(13,122,112,0.4);">
+            🟢 <b>Class IV (Green)</b>: Low Risk (Neem Oil & Bio-agents).
+          </div>
+        </div>
+      </section>
+
+      <!-- Nearest KVK Referral Directory -->
+      <section>
+        <div class="card-title" style="margin-bottom: 0.75rem;">
+          <span class="material-symbols-outlined icon">biotech</span>
+          <span>Verified KVK Scientist Directory</span>
+        </div>
+        <div id="kvkContainer"></div>
+      </section>
+
+    </main>
+
+    <!-- ══════════════════ Bottom Navigation Bar ══════════════════ -->
     <nav class="bottom-nav">
-      <div class="nav-item active" data-tab="scan">
-        <span class="material-symbols-outlined nav-icon">photo_camera</span>
-        <span>AI Doctor</span>
+      <div class="nav-item active" data-tab="doctor">
+        <span class="material-symbols-outlined nav-icon">medical_services</span>
+        <span data-i18n="doctorTab">Doctor</span>
       </div>
-      <div class="nav-item" data-tab="info">
-        <span class="material-symbols-outlined nav-icon">menu_book</span>
-        <span>Guide</span>
+      <div class="nav-item" data-tab="radar">
+        <span class="material-symbols-outlined nav-icon">radar</span>
+        <span data-i18n="radarTab">Radar</span>
+      </div>
+      <div class="nav-item nav-item-scan" data-tab="doctor">
+        <div class="scan-fab">
+          <span class="material-symbols-outlined icon">photo_camera</span>
+        </div>
+      </div>
+      <div class="nav-item" data-tab="assistant">
+        <span class="material-symbols-outlined nav-icon">smart_toy</span>
+        <span data-i18n="assistantTab">Assistant</span>
+      </div>
+      <div class="nav-item" data-tab="mandi">
+        <span class="material-symbols-outlined nav-icon">trending_up</span>
+        <span data-i18n="mandiTab">Mandi</span>
+      </div>
+      <div class="nav-item" data-tab="safety">
+        <span class="material-symbols-outlined nav-icon">shield</span>
+        <span data-i18n="safetyTab">Safety</span>
       </div>
     </nav>
 
