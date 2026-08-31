@@ -25,12 +25,12 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Install Dependencies & Prepare Assets
+      - name: Install Dependencies & Prepare Assets (Capacitor LTS)
         run: |
-          npm install -g @capacitor/cli @capacitor/core @capacitor/android
+          npm install -g @capacitor/cli@6 @capacitor/core@6 @capacitor/android@6
           cd kisan_mitra_mobile/standalone
           npm init -y
-          npm install @capacitor/core @capacitor/android @capacitor/camera @capacitor/filesystem
+          npm install @capacitor/core@6 @capacitor/android@6 @capacitor/camera@6 @capacitor/filesystem@6
           mkdir -p www
           cp -r index.html styles.css app_offline.js disease_data.json classes.json manifest.json sw.js models www/
 
@@ -49,7 +49,7 @@ jobs:
       - name: Build Android APK with Gradle
         run: |
           cd kisan_mitra_mobile/standalone/android
-          ./gradlew assembleDebug --stacktrace
+          ./gradlew assembleDebug
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
