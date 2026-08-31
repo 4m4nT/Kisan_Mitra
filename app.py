@@ -1211,6 +1211,15 @@ with app_tabs[0]:
             ]
         )
 
+    # Optional Fine-Tune GPS Coordinates for hyper-local precision
+    with st.expander("🌐 Fine-Tune GPS Coordinates (Optional / सटीक खेत जीपीएस निर्देशांक)"):
+        st.caption("Enter exact farm latitude & longitude for micro-climate disease risk analysis:")
+        col_gps_lat, col_gps_lon = st.columns(2)
+        with col_gps_lat:
+            custom_lat = st.number_input("Latitude (°N)", min_value=-90.0, max_value=90.0, value=0.0, step=0.0001, format="%.5f", help="Leave 0.0 to auto-geocode from city name")
+        with col_gps_lon:
+            custom_lon = st.number_input("Longitude (°E)", min_value=-180.0, max_value=180.0, value=0.0, step=0.0001, format="%.5f", help="Leave 0.0 to auto-geocode from city name")
+
     detect_clicked = st.button(f"🔍 {T['detect_btn']}", use_container_width=True)
     st.markdown('</div>', unsafe_allow_html=True)
 
@@ -1323,10 +1332,16 @@ with app_tabs[0]:
                 )
                 st.markdown('</div>', unsafe_allow_html=True)
 
-                # Weather & Outbreak Risk Card
+                # Weather & Outbreak Risk Card (with Precise GPS Support)
                 geo = None
                 weather = None
-                if location_input:
+                if custom_lat != 0.0 and custom_lon != 0.0:
+                    try:
+                        weather = fetch_weather_forecast(custom_lat, custom_lon)
+                        geo = {"lat": custom_lat, "lon": custom_lon, "label": f"Precise GPS ({custom_lat:.4f}°N, {custom_lon:.4f}°E)"}
+                    except Exception:
+                        pass
+                elif location_input:
                     try:
                         geo = geocode_location(location_input)
                         if geo:

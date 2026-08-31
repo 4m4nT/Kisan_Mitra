@@ -896,3 +896,43 @@ function initRecoveryTracker() {
     }
   });
 }
+
+// 15. Fine-Tune GPS Coordinates Handlers
+function toggleGPSFineTune() {
+  const body = document.getElementById('gpsFineTuneBody');
+  const icon = document.getElementById('gpsToggleIcon');
+  if (body) {
+    const isHidden = body.style.display === 'none' || body.style.display === '';
+    body.style.display = isHidden ? 'block' : 'none';
+    if (icon) icon.style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0deg)';
+  }
+}
+
+function detectPhoneGPS() {
+  const notice = document.getElementById('gpsStatusNotice');
+  const latIn = document.getElementById('farmLatInput');
+  const lonIn = document.getElementById('farmLonInput');
+  const cityIn = document.getElementById('farmCityInput');
+
+  if (notice) notice.textContent = state.lang === 'hi' ? 'जीपीएस खोजा जा रहा है...' : 'Acquiring phone GPS satellite fix...';
+
+  if ('geolocation' in navigator) {
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const lat = parseFloat(pos.coords.latitude.toFixed(5));
+        const lon = parseFloat(pos.coords.longitude.toFixed(5));
+        if (latIn) latIn.value = lat;
+        if (lonIn) lonIn.value = lon;
+        if (cityIn && !cityIn.value) cityIn.value = 'My Field GPS';
+        if (notice) notice.textContent = state.lang === 'hi' ? `✓ सटीक जीपीएस सेट: ${lat}°N, ${lon}°E` : `✓ Precise Farm GPS Set: ${lat}°N, ${lon}°E`;
+        updateWeatherRisk();
+      },
+      (err) => {
+        if (notice) notice.textContent = state.lang === 'hi' ? 'जीपीएस अनुमति नहीं मिली। कृपया मैन्युअल दर्ज करें।' : 'GPS signal unavailable. You can enter manually.';
+      },
+      { enableHighAccuracy: true, timeout: 10000 }
+    );
+  } else {
+    if (notice) notice.textContent = 'Geolocation not supported in this browser.';
+  }
+}
