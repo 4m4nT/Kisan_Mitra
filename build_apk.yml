@@ -1,0 +1,57 @@
+name: Build Android APK (Kisan Mitra)
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build-apk:
+    name: Build Standalone Offline Android APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Dependencies & Capacitor CLI
+        run: |
+          npm install -g @capacitor/cli @capacitor/core @capacitor/android
+          cd kisan_mitra_mobile/standalone
+          npm init -y
+          npm install @capacitor/core @capacitor/android @capacitor/camera @capacitor/filesystem
+
+      - name: Initialize Android Project
+        run: |
+          cd kisan_mitra_mobile/standalone
+          npx cap init "Kisan Mitra" "org.sih.kisanmitra" --web-dir "."
+          npx cap add android
+          npx cap copy android
+
+      - name: Grant Execute Permission for Gradlew
+        run: |
+          cd kisan_mitra_mobile/standalone/android
+          chmod +x gradlew
+
+      - name: Build Android APK with Gradle
+        run: |
+          cd kisan_mitra_mobile/standalone/android
+          ./gradlew assembleDebug --stacktrace
+
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: KisanMitra-AI-Doctor.apk
+          path: kisan_mitra_mobile/standalone/android/app/build/outputs/apk/debug/app-debug.apk
+          retention-days: 30
