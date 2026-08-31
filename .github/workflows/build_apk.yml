@@ -25,19 +25,21 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Install Dependencies & Capacitor CLI
+      - name: Install Dependencies & Prepare Assets
         run: |
           npm install -g @capacitor/cli @capacitor/core @capacitor/android
           cd kisan_mitra_mobile/standalone
           npm init -y
           npm install @capacitor/core @capacitor/android @capacitor/camera @capacitor/filesystem
+          mkdir -p www
+          cp -r index.html styles.css app_offline.js disease_data.json classes.json manifest.json sw.js models www/
 
-      - name: Initialize Android Project
+      - name: Initialize & Sync Android Project
         run: |
           cd kisan_mitra_mobile/standalone
-          npx cap init "Kisan Mitra" "org.sih.kisanmitra" --web-dir "."
+          npx cap init "Kisan Mitra" "org.sih.kisanmitra" --web-dir "www"
           npx cap add android
-          npx cap copy android
+          npx cap sync android
 
       - name: Grant Execute Permission for Gradlew
         run: |
