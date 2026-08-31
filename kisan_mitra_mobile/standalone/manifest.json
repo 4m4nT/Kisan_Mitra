@@ -1,0 +1,22 @@
+{
+  "name": "Kisan Mitra — Offline AI Crop Doctor",
+  "short_name": "Kisan Mitra",
+  "description": "100% Standalone On-Device Crop Pathology & Precision Agro-Advisory",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#081611",
+  "theme_color": "#081611",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "https://lh3.googleusercontent.com/aida-public/AB6AXuBOp55tEUenrJNVAw8j15lavmwFbHJ5k-4YpJkkmmD_AKM0Jm0qHAHOI0sKzuRvl_5QoS_72vDlHDUpJq5nzDuagM_TaombnLqe9FZBmY1U3obl5N_Le9O9cnv43XPuZf58m1z43tJCy3eyFp7lj4qSe6-o16S_vMwaREdUU5fYnHftCSZ-iO51OkGj91y0d2XjexYuqWbRJ95t2PaGNzyz5p2yP6f5hT5nfxn5UccO8aMs-I3hv7-Q",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://lh3.googleusercontent.com/aida-public/AB6AXuBOp55tEUenrJNVAw8j15lavmwFbHJ5k-4YpJkkmmD_AKM0Jm0qHAHOI0sKzuRvl_5QoS_72vDlHDUpJq5nzDuagM_TaombnLqe9FZBmY1U3obl5N_Le9O9cnv43XPuZf58m1z43tJCy3eyFp7lj4qSe6-o16S_vMwaREdUU5fYnHftCSZ-iO51OkGj91y0d2XjexYuqWbRJ95t2PaGNzyz5p2yP6f5hT5nfxn5UccO8aMs-I3hv7-Q",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

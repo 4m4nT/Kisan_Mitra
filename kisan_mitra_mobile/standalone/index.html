@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>Kisan Mitra — Standalone Offline AI Crop Doctor</title>
+  
+  <link rel="manifest" href="./manifest.json" />
+  <meta name="theme-color" content="#081611" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet" />
+
+  <link rel="stylesheet" href="./styles.css" />
+  <!-- OnnxRuntime Web for On-Device Inference -->
+  <script src="https://cdn.jsdelivr.net/npm/onnxruntime-web@1.17.3/dist/ort.min.js"></script>
+</head>
+<body>
+
+  <div class="app-container">
+    
+    <!-- Top App Bar -->
+    <header class="top-app-bar">
+      <div class="brand-section">
+        <div class="brand-logo-badge">🌿</div>
+        <div class="brand-text">
+          <h1 data-i18n="appTitle">Kisan Mitra</h1>
+          <span data-i18n="appSub">Offline AI Crop Doctor</span>
+        </div>
+      </div>
+      <div class="app-bar-actions">
+        <button id="langToggleBtn" class="lang-toggle-btn">🌐 हिन्दी</button>
+        <div class="status-pill">
+          <div class="pulse-dot"></div>
+          <span id="engineStatusText">100% Offline AI</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Scan Tab -->
+    <main id="tab-scan" class="tab-content active">
+      
+      <!-- Offline Badge Banner -->
+      <div class="offline-banner">
+        <span class="badge">ON-DEVICE AI</span>
+        <div style="font-size: 0.78rem; color: var(--km-on-surface);">
+          No internet required. 38-class neural vision model runs directly on your phone's processor.
+        </div>
+      </div>
+
+      <!-- Crop Selector -->
+      <div style="margin-bottom: 0.85rem;">
+        <div style="font-size: 0.78rem; font-weight: 700; color: var(--km-on-surface-variant); text-transform: uppercase; margin-bottom: 0.4rem;">
+          Select Crop Variety
+        </div>
+        <div class="crop-carousel">
+          <div class="crop-chip active" data-crop="Auto-Detect">🔍 Auto-Detect</div>
+          <div class="crop-chip" data-crop="Tomato">🍅 Tomato</div>
+          <div class="crop-chip" data-crop="Potato">🥔 Potato</div>
+          <div class="crop-chip" data-crop="Corn (Maize)">🌽 Corn (Maize)</div>
+          <div class="crop-chip" data-crop="Chili / Capsicum">🌶️ Chili</div>
+          <div class="crop-chip" data-crop="Grape">🍇 Grape</div>
+          <div class="crop-chip" data-crop="Apple">🍎 Apple</div>
+          <div class="crop-chip" data-crop="Soybean">🌱 Soybean</div>
+        </div>
+      </div>
+
+      <!-- Camera Viewfinder HUD -->
+      <div class="scanner-viewport">
+        <img id="scannerPreviewImg" class="scanner-preview-img" alt="Leaf Preview" />
+        <div class="scanner-hud">
+          <div class="scanner-corner corner-tl"></div>
+          <div class="scanner-corner corner-tr"></div>
+          <div class="scanner-corner corner-bl"></div>
+          <div class="scanner-corner corner-br"></div>
+        </div>
+        <div id="scanLaser" class="scan-laser"></div>
+        <div id="scannerPlaceholder" class="scanner-placeholder-content">
+          <span class="material-symbols-outlined icon">photo_camera</span>
+          <p data-i18n="scanPlaceholder">Align single crop leaf inside viewfinder</p>
+          <span style="font-size: 0.72rem; color: var(--km-on-surface-variant);">Supported: 38 Crop & Disease Classes</span>
+        </div>
+      </div>
+
+      <!-- Native Inputs -->
+      <input type="file" id="cameraInput" accept="image/*" capture="environment" style="display: none;" />
+      <input type="file" id="galleryInput" accept="image/*" style="display: none;" />
+
+      <!-- Controls -->
+      <div class="scanner-controls">
+        <button id="cameraBtn" class="camera-btn">
+          <span class="material-symbols-outlined">photo_camera</span>
+          <span data-i18n="cameraBtn">Open Camera</span>
+        </button>
+        <button id="galleryBtn" class="gallery-btn">
+          <span class="material-symbols-outlined">upload_file</span>
+          <span data-i18n="galleryBtn">Gallery</span>
+        </button>
+      </div>
+
+      <!-- Results Card -->
+      <div id="resultCard" class="result-card" style="margin-top: 1rem;"></div>
+
+    </main>
+
+    <!-- Tab 2: Offline Advisory Knowledgebase -->
+    <main id="tab-info" class="tab-content">
+      <div class="glass-card">
+        <div class="card-title" style="margin-bottom: 0.75rem;">
+          <span class="material-symbols-outlined icon">menu_book</span>
+          <span>Offline Agronomic Guide</span>
+        </div>
+        <p style="font-size: 0.82rem; color: var(--km-on-surface-variant); line-height: 1.5; margin-bottom: 0.75rem;">
+          This mobile app contains built-in treatment guidelines, organic formulations, and fungicide dosage calculators for:
+        </p>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; font-size: 0.78rem;">
+          <div style="background: rgba(8,22,17,0.5); padding: 0.5rem; border-radius: 8px;">🍅 Tomato (10 Diseases)</div>
+          <div style="background: rgba(8,22,17,0.5); padding: 0.5rem; border-radius: 8px;">🥔 Potato (3 Diseases)</div>
+          <div style="background: rgba(8,22,17,0.5); padding: 0.5rem; border-radius: 8px;">🌽 Corn (4 Diseases)</div>
+          <div style="background: rgba(8,22,17,0.5); padding: 0.5rem; border-radius: 8px;">🍇 Grape (4 Diseases)</div>
+          <div style="background: rgba(8,22,17,0.5); padding: 0.5rem; border-radius: 8px;">🍎 Apple (4 Diseases)</div>
+          <div style="background: rgba(8,22,17,0.5); padding: 0.5rem; border-radius: 8px;">🌶️ Chili & Capsicum</div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+      <div class="nav-item active" data-tab="scan">
+        <span class="material-symbols-outlined nav-icon">photo_camera</span>
+        <span>AI Doctor</span>
+      </div>
+      <div class="nav-item" data-tab="info">
+        <span class="material-symbols-outlined nav-icon">menu_book</span>
+        <span>Guide</span>
+      </div>
+    </nav>
+
+  </div>
+
+  <script src="./app_offline.js"></script>
+</body>
+</html>
